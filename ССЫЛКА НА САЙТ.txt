@@ -1,1 +1,3 @@
 https://mypress
+логин: admin
+пароль: 1111

@@ -1,0 +1,5805 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.3
+-- https://www.phpmyadmin.net/
+--
+-- Хост: MySQL-8.4:3306
+-- Время создания: Дек 09 2025 г., 15:41
+-- Версия сервера: 8.4.6
+-- Версия PHP: 8.4.13
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- База данных: `performance_schema`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `accounts`
+--
+
+CREATE TABLE `accounts` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `CURRENT_CONNECTIONS` bigint NOT NULL,
+  `TOTAL_CONNECTIONS` bigint NOT NULL,
+  `MAX_SESSION_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_SESSION_TOTAL_MEMORY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `binary_log_transaction_compression_stats`
+--
+
+CREATE TABLE `binary_log_transaction_compression_stats` (
+  `LOG_TYPE` enum('BINARY','RELAY') NOT NULL COMMENT 'The log type to which the transactions were written.',
+  `COMPRESSION_TYPE` varchar(64) NOT NULL COMMENT 'The transaction compression algorithm used.',
+  `TRANSACTION_COUNTER` bigint UNSIGNED NOT NULL COMMENT 'Number of transactions written to the log',
+  `COMPRESSED_BYTES_COUNTER` bigint UNSIGNED NOT NULL COMMENT 'The total number of bytes compressed.',
+  `UNCOMPRESSED_BYTES_COUNTER` bigint UNSIGNED NOT NULL COMMENT 'The total number of bytes uncompressed.',
+  `COMPRESSION_PERCENTAGE` smallint NOT NULL COMMENT 'The compression ratio as a percentage.',
+  `FIRST_TRANSACTION_ID` text COMMENT 'The first transaction written.',
+  `FIRST_TRANSACTION_COMPRESSED_BYTES` bigint UNSIGNED NOT NULL COMMENT 'First transaction written compressed bytes.',
+  `FIRST_TRANSACTION_UNCOMPRESSED_BYTES` bigint UNSIGNED NOT NULL COMMENT 'First transaction written uncompressed bytes.',
+  `FIRST_TRANSACTION_TIMESTAMP` timestamp(6) NULL DEFAULT NULL COMMENT 'When the first transaction was written.',
+  `LAST_TRANSACTION_ID` text COMMENT 'The last transaction written.',
+  `LAST_TRANSACTION_COMPRESSED_BYTES` bigint UNSIGNED NOT NULL COMMENT 'Last transaction written compressed bytes.',
+  `LAST_TRANSACTION_UNCOMPRESSED_BYTES` bigint UNSIGNED NOT NULL COMMENT 'Last transaction written uncompressed bytes.',
+  `LAST_TRANSACTION_TIMESTAMP` timestamp(6) NULL DEFAULT NULL COMMENT 'When the last transaction was written.'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `cond_instances`
+--
+
+CREATE TABLE `cond_instances` (
+  `NAME` varchar(128) NOT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `data_locks`
+--
+
+CREATE TABLE `data_locks` (
+  `ENGINE` varchar(32) NOT NULL,
+  `ENGINE_LOCK_ID` varchar(128) NOT NULL,
+  `ENGINE_TRANSACTION_ID` bigint UNSIGNED DEFAULT NULL,
+  `THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `PARTITION_NAME` varchar(64) DEFAULT NULL,
+  `SUBPARTITION_NAME` varchar(64) DEFAULT NULL,
+  `INDEX_NAME` varchar(64) DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `LOCK_TYPE` varchar(32) NOT NULL,
+  `LOCK_MODE` varchar(32) NOT NULL,
+  `LOCK_STATUS` varchar(32) NOT NULL,
+  `LOCK_DATA` varchar(8192) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `data_lock_waits`
+--
+
+CREATE TABLE `data_lock_waits` (
+  `ENGINE` varchar(32) NOT NULL,
+  `REQUESTING_ENGINE_LOCK_ID` varchar(128) NOT NULL,
+  `REQUESTING_ENGINE_TRANSACTION_ID` bigint UNSIGNED DEFAULT NULL,
+  `REQUESTING_THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `REQUESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `REQUESTING_OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `BLOCKING_ENGINE_LOCK_ID` varchar(128) NOT NULL,
+  `BLOCKING_ENGINE_TRANSACTION_ID` bigint UNSIGNED DEFAULT NULL,
+  `BLOCKING_THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `BLOCKING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `BLOCKING_OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `error_log`
+--
+
+CREATE TABLE `error_log` (
+  `LOGGED` timestamp(6) NOT NULL,
+  `THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `PRIO` enum('System','Error','Warning','Note') NOT NULL,
+  `ERROR_CODE` varchar(10) DEFAULT NULL,
+  `SUBSYSTEM` varchar(7) DEFAULT NULL,
+  `DATA` text NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_errors_summary_by_account_by_error`
+--
+
+CREATE TABLE `events_errors_summary_by_account_by_error` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `ERROR_NUMBER` int DEFAULT NULL,
+  `ERROR_NAME` varchar(64) DEFAULT NULL,
+  `SQL_STATE` varchar(5) DEFAULT NULL,
+  `SUM_ERROR_RAISED` bigint UNSIGNED NOT NULL,
+  `SUM_ERROR_HANDLED` bigint UNSIGNED NOT NULL,
+  `FIRST_SEEN` timestamp NULL DEFAULT NULL,
+  `LAST_SEEN` timestamp NULL DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_errors_summary_by_host_by_error`
+--
+
+CREATE TABLE `events_errors_summary_by_host_by_error` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `ERROR_NUMBER` int DEFAULT NULL,
+  `ERROR_NAME` varchar(64) DEFAULT NULL,
+  `SQL_STATE` varchar(5) DEFAULT NULL,
+  `SUM_ERROR_RAISED` bigint UNSIGNED NOT NULL,
+  `SUM_ERROR_HANDLED` bigint UNSIGNED NOT NULL,
+  `FIRST_SEEN` timestamp NULL DEFAULT NULL,
+  `LAST_SEEN` timestamp NULL DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_errors_summary_by_thread_by_error`
+--
+
+CREATE TABLE `events_errors_summary_by_thread_by_error` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `ERROR_NUMBER` int DEFAULT NULL,
+  `ERROR_NAME` varchar(64) DEFAULT NULL,
+  `SQL_STATE` varchar(5) DEFAULT NULL,
+  `SUM_ERROR_RAISED` bigint UNSIGNED NOT NULL,
+  `SUM_ERROR_HANDLED` bigint UNSIGNED NOT NULL,
+  `FIRST_SEEN` timestamp NULL DEFAULT NULL,
+  `LAST_SEEN` timestamp NULL DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_errors_summary_by_user_by_error`
+--
+
+CREATE TABLE `events_errors_summary_by_user_by_error` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `ERROR_NUMBER` int DEFAULT NULL,
+  `ERROR_NAME` varchar(64) DEFAULT NULL,
+  `SQL_STATE` varchar(5) DEFAULT NULL,
+  `SUM_ERROR_RAISED` bigint UNSIGNED NOT NULL,
+  `SUM_ERROR_HANDLED` bigint UNSIGNED NOT NULL,
+  `FIRST_SEEN` timestamp NULL DEFAULT NULL,
+  `LAST_SEEN` timestamp NULL DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_errors_summary_global_by_error`
+--
+
+CREATE TABLE `events_errors_summary_global_by_error` (
+  `ERROR_NUMBER` int DEFAULT NULL,
+  `ERROR_NAME` varchar(64) DEFAULT NULL,
+  `SQL_STATE` varchar(5) DEFAULT NULL,
+  `SUM_ERROR_RAISED` bigint UNSIGNED NOT NULL,
+  `SUM_ERROR_HANDLED` bigint UNSIGNED NOT NULL,
+  `FIRST_SEEN` timestamp NULL DEFAULT NULL,
+  `LAST_SEEN` timestamp NULL DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_stages_current`
+--
+
+CREATE TABLE `events_stages_current` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `WORK_COMPLETED` bigint UNSIGNED DEFAULT NULL,
+  `WORK_ESTIMATED` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_stages_history`
+--
+
+CREATE TABLE `events_stages_history` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `WORK_COMPLETED` bigint UNSIGNED DEFAULT NULL,
+  `WORK_ESTIMATED` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_stages_history_long`
+--
+
+CREATE TABLE `events_stages_history_long` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `WORK_COMPLETED` bigint UNSIGNED DEFAULT NULL,
+  `WORK_ESTIMATED` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_stages_summary_by_account_by_event_name`
+--
+
+CREATE TABLE `events_stages_summary_by_account_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_stages_summary_by_host_by_event_name`
+--
+
+CREATE TABLE `events_stages_summary_by_host_by_event_name` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_stages_summary_by_thread_by_event_name`
+--
+
+CREATE TABLE `events_stages_summary_by_thread_by_event_name` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_stages_summary_by_user_by_event_name`
+--
+
+CREATE TABLE `events_stages_summary_by_user_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_stages_summary_global_by_event_name`
+--
+
+CREATE TABLE `events_stages_summary_global_by_event_name` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_current`
+--
+
+CREATE TABLE `events_statements_current` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SQL_TEXT` longtext,
+  `DIGEST` varchar(64) DEFAULT NULL,
+  `DIGEST_TEXT` longtext,
+  `CURRENT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED DEFAULT NULL,
+  `MYSQL_ERRNO` int DEFAULT NULL,
+  `RETURNED_SQLSTATE` varchar(5) DEFAULT NULL,
+  `MESSAGE_TEXT` varchar(128) DEFAULT NULL,
+  `ERRORS` bigint UNSIGNED NOT NULL,
+  `WARNINGS` bigint UNSIGNED NOT NULL,
+  `ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL,
+  `NESTING_EVENT_LEVEL` int DEFAULT NULL,
+  `STATEMENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `EXECUTION_ENGINE` enum('PRIMARY','SECONDARY') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_histogram_by_digest`
+--
+
+CREATE TABLE `events_statements_histogram_by_digest` (
+  `SCHEMA_NAME` varchar(64) DEFAULT NULL,
+  `DIGEST` varchar(64) DEFAULT NULL,
+  `BUCKET_NUMBER` int UNSIGNED NOT NULL,
+  `BUCKET_TIMER_LOW` bigint UNSIGNED NOT NULL,
+  `BUCKET_TIMER_HIGH` bigint UNSIGNED NOT NULL,
+  `COUNT_BUCKET` bigint UNSIGNED NOT NULL,
+  `COUNT_BUCKET_AND_LOWER` bigint UNSIGNED NOT NULL,
+  `BUCKET_QUANTILE` double(7,6) NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_histogram_global`
+--
+
+CREATE TABLE `events_statements_histogram_global` (
+  `BUCKET_NUMBER` int UNSIGNED NOT NULL,
+  `BUCKET_TIMER_LOW` bigint UNSIGNED NOT NULL,
+  `BUCKET_TIMER_HIGH` bigint UNSIGNED NOT NULL,
+  `COUNT_BUCKET` bigint UNSIGNED NOT NULL,
+  `COUNT_BUCKET_AND_LOWER` bigint UNSIGNED NOT NULL,
+  `BUCKET_QUANTILE` double(7,6) NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_history`
+--
+
+CREATE TABLE `events_statements_history` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SQL_TEXT` longtext,
+  `DIGEST` varchar(64) DEFAULT NULL,
+  `DIGEST_TEXT` longtext,
+  `CURRENT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED DEFAULT NULL,
+  `MYSQL_ERRNO` int DEFAULT NULL,
+  `RETURNED_SQLSTATE` varchar(5) DEFAULT NULL,
+  `MESSAGE_TEXT` varchar(128) DEFAULT NULL,
+  `ERRORS` bigint UNSIGNED NOT NULL,
+  `WARNINGS` bigint UNSIGNED NOT NULL,
+  `ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL,
+  `NESTING_EVENT_LEVEL` int DEFAULT NULL,
+  `STATEMENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `EXECUTION_ENGINE` enum('PRIMARY','SECONDARY') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_history_long`
+--
+
+CREATE TABLE `events_statements_history_long` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SQL_TEXT` longtext,
+  `DIGEST` varchar(64) DEFAULT NULL,
+  `DIGEST_TEXT` longtext,
+  `CURRENT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED DEFAULT NULL,
+  `MYSQL_ERRNO` int DEFAULT NULL,
+  `RETURNED_SQLSTATE` varchar(5) DEFAULT NULL,
+  `MESSAGE_TEXT` varchar(128) DEFAULT NULL,
+  `ERRORS` bigint UNSIGNED NOT NULL,
+  `WARNINGS` bigint UNSIGNED NOT NULL,
+  `ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL,
+  `NESTING_EVENT_LEVEL` int DEFAULT NULL,
+  `STATEMENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `EXECUTION_ENGINE` enum('PRIMARY','SECONDARY') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_summary_by_account_by_event_name`
+--
+
+CREATE TABLE `events_statements_summary_by_account_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `SUM_LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SUM_ERRORS` bigint UNSIGNED NOT NULL,
+  `SUM_WARNINGS` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `COUNT_SECONDARY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_summary_by_digest`
+--
+
+CREATE TABLE `events_statements_summary_by_digest` (
+  `SCHEMA_NAME` varchar(64) DEFAULT NULL,
+  `DIGEST` varchar(64) DEFAULT NULL,
+  `DIGEST_TEXT` longtext,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `SUM_LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SUM_ERRORS` bigint UNSIGNED NOT NULL,
+  `SUM_WARNINGS` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `COUNT_SECONDARY` bigint UNSIGNED NOT NULL,
+  `FIRST_SEEN` timestamp(6) NOT NULL,
+  `LAST_SEEN` timestamp(6) NOT NULL,
+  `QUANTILE_95` bigint UNSIGNED NOT NULL,
+  `QUANTILE_99` bigint UNSIGNED NOT NULL,
+  `QUANTILE_999` bigint UNSIGNED NOT NULL,
+  `QUERY_SAMPLE_TEXT` longtext,
+  `QUERY_SAMPLE_SEEN` timestamp(6) NOT NULL,
+  `QUERY_SAMPLE_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_summary_by_host_by_event_name`
+--
+
+CREATE TABLE `events_statements_summary_by_host_by_event_name` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `SUM_LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SUM_ERRORS` bigint UNSIGNED NOT NULL,
+  `SUM_WARNINGS` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `COUNT_SECONDARY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_summary_by_program`
+--
+
+CREATE TABLE `events_statements_summary_by_program` (
+  `OBJECT_TYPE` enum('EVENT','FUNCTION','PROCEDURE','TABLE','TRIGGER') NOT NULL,
+  `OBJECT_SCHEMA` varchar(64) NOT NULL,
+  `OBJECT_NAME` varchar(64) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_STATEMENTS` bigint UNSIGNED NOT NULL,
+  `SUM_STATEMENTS_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_STATEMENTS_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_STATEMENTS_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_STATEMENTS_WAIT` bigint UNSIGNED NOT NULL,
+  `SUM_LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SUM_ERRORS` bigint UNSIGNED NOT NULL,
+  `SUM_WARNINGS` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `COUNT_SECONDARY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_summary_by_thread_by_event_name`
+--
+
+CREATE TABLE `events_statements_summary_by_thread_by_event_name` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `SUM_LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SUM_ERRORS` bigint UNSIGNED NOT NULL,
+  `SUM_WARNINGS` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `COUNT_SECONDARY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_summary_by_user_by_event_name`
+--
+
+CREATE TABLE `events_statements_summary_by_user_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `SUM_LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SUM_ERRORS` bigint UNSIGNED NOT NULL,
+  `SUM_WARNINGS` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `COUNT_SECONDARY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_statements_summary_global_by_event_name`
+--
+
+CREATE TABLE `events_statements_summary_global_by_event_name` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `SUM_LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SUM_ERRORS` bigint UNSIGNED NOT NULL,
+  `SUM_WARNINGS` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `COUNT_SECONDARY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_transactions_current`
+--
+
+CREATE TABLE `events_transactions_current` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `STATE` enum('ACTIVE','COMMITTED','ROLLED BACK') DEFAULT NULL,
+  `TRX_ID` bigint UNSIGNED DEFAULT NULL,
+  `GTID` varchar(90) DEFAULT NULL,
+  `XID_FORMAT_ID` int DEFAULT NULL,
+  `XID_GTRID` varchar(130) DEFAULT NULL,
+  `XID_BQUAL` varchar(130) DEFAULT NULL,
+  `XA_STATE` varchar(64) DEFAULT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `ACCESS_MODE` enum('READ ONLY','READ WRITE') DEFAULT NULL,
+  `ISOLATION_LEVEL` varchar(64) DEFAULT NULL,
+  `AUTOCOMMIT` enum('YES','NO') NOT NULL,
+  `NUMBER_OF_SAVEPOINTS` bigint UNSIGNED DEFAULT NULL,
+  `NUMBER_OF_ROLLBACK_TO_SAVEPOINT` bigint UNSIGNED DEFAULT NULL,
+  `NUMBER_OF_RELEASE_SAVEPOINT` bigint UNSIGNED DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_transactions_history`
+--
+
+CREATE TABLE `events_transactions_history` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `STATE` enum('ACTIVE','COMMITTED','ROLLED BACK') DEFAULT NULL,
+  `TRX_ID` bigint UNSIGNED DEFAULT NULL,
+  `GTID` varchar(90) DEFAULT NULL,
+  `XID_FORMAT_ID` int DEFAULT NULL,
+  `XID_GTRID` varchar(130) DEFAULT NULL,
+  `XID_BQUAL` varchar(130) DEFAULT NULL,
+  `XA_STATE` varchar(64) DEFAULT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `ACCESS_MODE` enum('READ ONLY','READ WRITE') DEFAULT NULL,
+  `ISOLATION_LEVEL` varchar(64) DEFAULT NULL,
+  `AUTOCOMMIT` enum('YES','NO') NOT NULL,
+  `NUMBER_OF_SAVEPOINTS` bigint UNSIGNED DEFAULT NULL,
+  `NUMBER_OF_ROLLBACK_TO_SAVEPOINT` bigint UNSIGNED DEFAULT NULL,
+  `NUMBER_OF_RELEASE_SAVEPOINT` bigint UNSIGNED DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_transactions_history_long`
+--
+
+CREATE TABLE `events_transactions_history_long` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `STATE` enum('ACTIVE','COMMITTED','ROLLED BACK') DEFAULT NULL,
+  `TRX_ID` bigint UNSIGNED DEFAULT NULL,
+  `GTID` varchar(90) DEFAULT NULL,
+  `XID_FORMAT_ID` int DEFAULT NULL,
+  `XID_GTRID` varchar(130) DEFAULT NULL,
+  `XID_BQUAL` varchar(130) DEFAULT NULL,
+  `XA_STATE` varchar(64) DEFAULT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `ACCESS_MODE` enum('READ ONLY','READ WRITE') DEFAULT NULL,
+  `ISOLATION_LEVEL` varchar(64) DEFAULT NULL,
+  `AUTOCOMMIT` enum('YES','NO') NOT NULL,
+  `NUMBER_OF_SAVEPOINTS` bigint UNSIGNED DEFAULT NULL,
+  `NUMBER_OF_ROLLBACK_TO_SAVEPOINT` bigint UNSIGNED DEFAULT NULL,
+  `NUMBER_OF_RELEASE_SAVEPOINT` bigint UNSIGNED DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_transactions_summary_by_account_by_event_name`
+--
+
+CREATE TABLE `events_transactions_summary_by_account_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_transactions_summary_by_host_by_event_name`
+--
+
+CREATE TABLE `events_transactions_summary_by_host_by_event_name` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_transactions_summary_by_thread_by_event_name`
+--
+
+CREATE TABLE `events_transactions_summary_by_thread_by_event_name` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_transactions_summary_by_user_by_event_name`
+--
+
+CREATE TABLE `events_transactions_summary_by_user_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_transactions_summary_global_by_event_name`
+--
+
+CREATE TABLE `events_transactions_summary_global_by_event_name` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_ONLY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_current`
+--
+
+CREATE TABLE `events_waits_current` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `SPINS` int UNSIGNED DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(512) DEFAULT NULL,
+  `INDEX_NAME` varchar(64) DEFAULT NULL,
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL,
+  `OPERATION` varchar(32) NOT NULL,
+  `NUMBER_OF_BYTES` bigint DEFAULT NULL,
+  `FLAGS` int UNSIGNED DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_history`
+--
+
+CREATE TABLE `events_waits_history` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `SPINS` int UNSIGNED DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(512) DEFAULT NULL,
+  `INDEX_NAME` varchar(64) DEFAULT NULL,
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL,
+  `OPERATION` varchar(32) NOT NULL,
+  `NUMBER_OF_BYTES` bigint DEFAULT NULL,
+  `FLAGS` int UNSIGNED DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_history_long`
+--
+
+CREATE TABLE `events_waits_history_long` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_ID` bigint UNSIGNED NOT NULL,
+  `END_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `TIMER_START` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_END` bigint UNSIGNED DEFAULT NULL,
+  `TIMER_WAIT` bigint UNSIGNED DEFAULT NULL,
+  `SPINS` int UNSIGNED DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(512) DEFAULT NULL,
+  `INDEX_NAME` varchar(64) DEFAULT NULL,
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `NESTING_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `NESTING_EVENT_TYPE` enum('TRANSACTION','STATEMENT','STAGE','WAIT') DEFAULT NULL,
+  `OPERATION` varchar(32) NOT NULL,
+  `NUMBER_OF_BYTES` bigint DEFAULT NULL,
+  `FLAGS` int UNSIGNED DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_summary_by_account_by_event_name`
+--
+
+CREATE TABLE `events_waits_summary_by_account_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_summary_by_host_by_event_name`
+--
+
+CREATE TABLE `events_waits_summary_by_host_by_event_name` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_summary_by_instance`
+--
+
+CREATE TABLE `events_waits_summary_by_instance` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_summary_by_thread_by_event_name`
+--
+
+CREATE TABLE `events_waits_summary_by_thread_by_event_name` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_summary_by_user_by_event_name`
+--
+
+CREATE TABLE `events_waits_summary_by_user_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `events_waits_summary_global_by_event_name`
+--
+
+CREATE TABLE `events_waits_summary_global_by_event_name` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `file_instances`
+--
+
+CREATE TABLE `file_instances` (
+  `FILE_NAME` varchar(512) NOT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `OPEN_COUNT` int UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `file_summary_by_event_name`
+--
+
+CREATE TABLE `file_summary_by_event_name` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_READ` bigint NOT NULL,
+  `COUNT_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_WRITE` bigint NOT NULL,
+  `COUNT_MISC` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_MISC` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `file_summary_by_instance`
+--
+
+CREATE TABLE `file_summary_by_instance` (
+  `FILE_NAME` varchar(512) NOT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_READ` bigint NOT NULL,
+  `COUNT_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_WRITE` bigint NOT NULL,
+  `COUNT_MISC` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_MISC` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `global_status`
+--
+
+CREATE TABLE `global_status` (
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `global_status`
+--
+
+INSERT INTO `global_status` (`VARIABLE_NAME`, `VARIABLE_VALUE`) VALUES
+('Aborted_clients', '0'),
+('Aborted_connects', '0'),
+('Acl_cache_items_count', '0'),
+('Binlog_cache_disk_use', '0'),
+('Binlog_cache_use', '0'),
+('Binlog_stmt_cache_disk_use', '0'),
+('Binlog_stmt_cache_use', '0'),
+('Bytes_received', '600803368'),
+('Bytes_sent', '18608661632'),
+('Caching_sha2_password_rsa_public_key', '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtiHexnOkFQWwLctF3sIQ\n2d8WWvPwd60VT5gfLcp16MdC/EvHXwqZADIReI9OEll1OUnvAHYgid0YzIZBi93T\n0UDx6CXoZrEHz/Ri8W3T4vpdLX1lVgOAhYWlW3nmRbHGwjdM7mtPlx7jmYe/1Bw2\nsl0Hnj7RzvNPhHwDAVMpWVJApiFOl6XtCCoDq0Zp0ze+1+62+K6752Kt7ufPJKWL\nTZU3Y8oFbCFFnchmdU1cz3A7clQWXAejL0BIuRGddNNEPnQrNjFjzJ9GgeVK4l3/\n2ZvCshWpYZ9RvzOoRJh/rbrYsm068fKMDiV5GSygDq2XOO3a0bYKqHxqGwdQzvri\n3wIDAQAB\n-----END PUBLIC KEY-----\n'),
+('Com_stmt_reprepare', '0'),
+('Connection_errors_accept', '0'),
+('Connection_errors_internal', '0'),
+('Connection_errors_max_connections', '0'),
+('Connection_errors_peer_address', '0'),
+('Connection_errors_select', '0'),
+('Connection_errors_tcpwrap', '0'),
+('Connections', '27121'),
+('Created_tmp_disk_tables', '2'),
+('Created_tmp_files', '8'),
+('Created_tmp_tables', '95484'),
+('Current_tls_ca', 'D:/OSPanel/data/ssl/cacert.pem'),
+('Current_tls_capath', ''),
+('Current_tls_cert', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.crt'),
+('Current_tls_cipher', ''),
+('Current_tls_ciphersuites', ''),
+('Current_tls_crl', ''),
+('Current_tls_crlpath', ''),
+('Current_tls_key', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.key'),
+('Current_tls_version', 'TLSv1.2,TLSv1.3'),
+('Delayed_errors', '0'),
+('Delayed_insert_threads', '0'),
+('Delayed_writes', '0'),
+('Deprecated_use_fk_on_non_standard_key_count', '0'),
+('Deprecated_use_fk_on_non_standard_key_last_timestamp', '0'),
+('Deprecated_use_i_s_processlist_count', '0'),
+('Deprecated_use_i_s_processlist_last_timestamp', '0'),
+('Error_log_buffered_bytes', '22528'),
+('Error_log_buffered_events', '193'),
+('Error_log_expired_events', '0'),
+('Error_log_latest_write', '1765283506484365'),
+('Flush_commands', '3'),
+('Global_connection_memory', '0'),
+('Handler_commit', '1830284'),
+('Handler_delete', '8813'),
+('Handler_discover', '0'),
+('Handler_external_lock', '4493441'),
+('Handler_mrr_init', '0'),
+('Handler_prepare', '0'),
+('Handler_read_first', '99122'),
+('Handler_read_key', '3808178'),
+('Handler_read_last', '1'),
+('Handler_read_next', '7957841'),
+('Handler_read_prev', '24830'),
+('Handler_read_rnd', '1204232'),
+('Handler_read_rnd_next', '8081352'),
+('Handler_rollback', '0'),
+('Handler_savepoint', '0'),
+('Handler_savepoint_rollback', '0'),
+('Handler_update', '52265'),
+('Handler_write', '676686'),
+('Innodb_buffer_pool_dump_status', 'Dumping of buffer pool not started'),
+('Innodb_buffer_pool_load_status', 'Buffer pool(s) load completed at 251122 11:26:08'),
+('Innodb_buffer_pool_resize_status', ''),
+('Innodb_buffer_pool_resize_status_code', '0'),
+('Innodb_buffer_pool_resize_status_progress', '0'),
+('Innodb_buffer_pool_pages_data', '9537'),
+('Innodb_buffer_pool_bytes_data', '156254208'),
+('Innodb_buffer_pool_pages_dirty', '0'),
+('Innodb_buffer_pool_bytes_dirty', '0'),
+('Innodb_buffer_pool_pages_flushed', '372306'),
+('Innodb_buffer_pool_pages_free', '23227'),
+('Innodb_buffer_pool_pages_misc', '4'),
+('Innodb_buffer_pool_pages_total', '32768'),
+('Innodb_buffer_pool_read_ahead_rnd', '0'),
+('Innodb_buffer_pool_read_ahead', '0'),
+('Innodb_buffer_pool_read_ahead_evicted', '0'),
+('Innodb_buffer_pool_read_requests', '45630792'),
+('Innodb_buffer_pool_reads', '1369'),
+('Innodb_buffer_pool_wait_free', '0'),
+('Innodb_buffer_pool_write_requests', '1115136'),
+('Innodb_data_fsyncs', '273874'),
+('Innodb_data_pending_fsyncs', '0'),
+('Innodb_data_pending_reads', '0'),
+('Innodb_data_pending_writes', '0'),
+('Innodb_data_read', '35113472'),
+('Innodb_data_reads', '2218'),
+('Innodb_data_writes', '628186'),
+('Innodb_data_written', '2442084864'),
+('Innodb_dblwr_pages_written', '372158'),
+('Innodb_dblwr_writes', '25377'),
+('Innodb_redo_log_read_only', 'OFF'),
+('Innodb_redo_log_uuid', '1648430680'),
+('Innodb_redo_log_checkpoint_lsn', '470557852'),
+('Innodb_redo_log_current_lsn', '470557852'),
+('Innodb_redo_log_flushed_to_disk_lsn', '470557852'),
+('Innodb_redo_log_logical_size', '512'),
+('Innodb_redo_log_physical_size', '55705600'),
+('Innodb_redo_log_capacity_resized', '104857600'),
+('Innodb_redo_log_resize_status', 'OK'),
+('Innodb_log_waits', '0'),
+('Innodb_log_write_requests', '637820'),
+('Innodb_log_writes', '215250'),
+('Innodb_os_log_fsyncs', '186678'),
+('Innodb_os_log_pending_fsyncs', '0'),
+('Innodb_os_log_pending_writes', '0'),
+('Innodb_os_log_written', '504573952'),
+('Innodb_page_size', '16384'),
+('Innodb_pages_created', '8244'),
+('Innodb_pages_read', '1368'),
+('Innodb_pages_written', '372312'),
+('Innodb_redo_log_enabled', 'ON'),
+('Innodb_row_lock_current_waits', '0'),
+('Innodb_row_lock_time', '473'),
+('Innodb_row_lock_time_avg', '2'),
+('Innodb_row_lock_time_max', '118'),
+('Innodb_row_lock_waits', '236'),
+('Innodb_rows_deleted', '8156'),
+('Innodb_rows_inserted', '22587'),
+('Innodb_rows_read', '16323688'),
+('Innodb_rows_updated', '51504'),
+('Innodb_system_rows_deleted', '665'),
+('Innodb_system_rows_inserted', '1158'),
+('Innodb_system_rows_read', '1012242'),
+('Innodb_system_rows_updated', '735'),
+('Innodb_sampled_pages_read', '0'),
+('Innodb_sampled_pages_skipped', '0'),
+('Innodb_num_open_files', '34'),
+('Innodb_truncated_status_writes', '0'),
+('Innodb_undo_tablespaces_total', '2'),
+('Innodb_undo_tablespaces_implicit', '2'),
+('Innodb_undo_tablespaces_explicit', '0'),
+('Innodb_undo_tablespaces_active', '2'),
+('Key_blocks_not_flushed', '0'),
+('Key_blocks_unused', '26792'),
+('Key_blocks_used', '0'),
+('Key_read_requests', '0'),
+('Key_reads', '0'),
+('Key_write_requests', '0'),
+('Key_writes', '0'),
+('Locked_connects', '0'),
+('Max_execution_time_exceeded', '0'),
+('Max_execution_time_set', '0'),
+('Max_execution_time_set_failed', '0'),
+('Max_used_connections', '9'),
+('Max_used_connections_time', '2025-11-30 17:21:17'),
+('Mysqlx_aborted_clients', '0'),
+('Mysqlx_address', '127.0.1.28'),
+('Mysqlx_bytes_received', '0'),
+('Mysqlx_bytes_received_compressed_payload', '0'),
+('Mysqlx_bytes_received_uncompressed_frame', '0'),
+('Mysqlx_bytes_sent', '0'),
+('Mysqlx_bytes_sent_compressed_payload', '0'),
+('Mysqlx_bytes_sent_uncompressed_frame', '0'),
+('Mysqlx_compression_algorithm', ''),
+('Mysqlx_compression_level', ''),
+('Mysqlx_connection_accept_errors', '0'),
+('Mysqlx_connection_errors', '0'),
+('Mysqlx_connections_accepted', '0'),
+('Mysqlx_connections_closed', '0'),
+('Mysqlx_connections_rejected', '0'),
+('Mysqlx_crud_create_view', '0'),
+('Mysqlx_crud_delete', '0'),
+('Mysqlx_crud_drop_view', '0'),
+('Mysqlx_crud_find', '0'),
+('Mysqlx_crud_insert', '0'),
+('Mysqlx_crud_modify_view', '0'),
+('Mysqlx_crud_update', '0'),
+('Mysqlx_cursor_close', '0'),
+('Mysqlx_cursor_fetch', '0'),
+('Mysqlx_cursor_open', '0'),
+('Mysqlx_errors_sent', '0'),
+('Mysqlx_errors_unknown_message_type', '0'),
+('Mysqlx_expect_close', '0'),
+('Mysqlx_expect_open', '0'),
+('Mysqlx_init_error', '0'),
+('Mysqlx_messages_sent', '0'),
+('Mysqlx_notice_global_sent', '0'),
+('Mysqlx_notice_other_sent', '0'),
+('Mysqlx_notice_warning_sent', '0'),
+('Mysqlx_notified_by_group_replication', '0'),
+('Mysqlx_port', '33060'),
+('Mysqlx_prep_deallocate', '0'),
+('Mysqlx_prep_execute', '0'),
+('Mysqlx_prep_prepare', '0'),
+('Mysqlx_rows_sent', '0'),
+('Mysqlx_sessions', '0'),
+('Mysqlx_sessions_accepted', '0'),
+('Mysqlx_sessions_closed', '0'),
+('Mysqlx_sessions_fatal_error', '0'),
+('Mysqlx_sessions_killed', '0'),
+('Mysqlx_sessions_rejected', '0'),
+('Mysqlx_socket', 'UNDEFINED'),
+('Mysqlx_ssl_accepts', '0'),
+('Mysqlx_ssl_active', ''),
+('Mysqlx_ssl_cipher', ''),
+('Mysqlx_ssl_cipher_list', ''),
+('Mysqlx_ssl_ctx_verify_depth', '18446744073709551615'),
+('Mysqlx_ssl_ctx_verify_mode', '5'),
+('Mysqlx_ssl_finished_accepts', '0'),
+('Mysqlx_ssl_server_not_after', 'Nov 17 20:53:51 2035 GMT'),
+('Mysqlx_ssl_server_not_before', 'Nov 19 20:53:51 2025 GMT'),
+('Mysqlx_ssl_verify_depth', ''),
+('Mysqlx_ssl_verify_mode', ''),
+('Mysqlx_ssl_version', ''),
+('Mysqlx_stmt_create_collection', '0'),
+('Mysqlx_stmt_create_collection_index', '0'),
+('Mysqlx_stmt_disable_notices', '0'),
+('Mysqlx_stmt_drop_collection', '0'),
+('Mysqlx_stmt_drop_collection_index', '0'),
+('Mysqlx_stmt_enable_notices', '0'),
+('Mysqlx_stmt_ensure_collection', '0'),
+('Mysqlx_stmt_execute_mysqlx', '0'),
+('Mysqlx_stmt_execute_sql', '0'),
+('Mysqlx_stmt_execute_xplugin', '0'),
+('Mysqlx_stmt_get_collection_options', '0'),
+('Mysqlx_stmt_kill_client', '0'),
+('Mysqlx_stmt_list_clients', '0'),
+('Mysqlx_stmt_list_notices', '0'),
+('Mysqlx_stmt_list_objects', '0'),
+('Mysqlx_stmt_modify_collection_options', '0'),
+('Mysqlx_stmt_ping', '0'),
+('Mysqlx_worker_threads', '2'),
+('Mysqlx_worker_threads_active', '0'),
+('Not_flushed_delayed_rows', '0'),
+('Ongoing_anonymous_transaction_count', '0'),
+('Open_files', '6'),
+('Open_streams', '0'),
+('Open_table_definitions', '312'),
+('Open_tables', '1481'),
+('Opened_files', '6'),
+('Opened_table_definitions', '381'),
+('Opened_tables', '1588'),
+('Performance_schema_accounts_lost', '0'),
+('Performance_schema_cond_classes_lost', '0'),
+('Performance_schema_cond_instances_lost', '0'),
+('Performance_schema_digest_lost', '0'),
+('Performance_schema_file_classes_lost', '0'),
+('Performance_schema_file_handles_lost', '0'),
+('Performance_schema_file_instances_lost', '0'),
+('Performance_schema_hosts_lost', '0'),
+('Performance_schema_index_stat_lost', '0'),
+('Performance_schema_locker_lost', '0'),
+('Performance_schema_memory_classes_lost', '0'),
+('Performance_schema_metadata_lock_lost', '0'),
+('Performance_schema_meter_lost', '0'),
+('Performance_schema_metric_lost', '0'),
+('Performance_schema_mutex_classes_lost', '0'),
+('Performance_schema_mutex_instances_lost', '0'),
+('Performance_schema_nested_statement_lost', '0'),
+('Performance_schema_prepared_statements_lost', '0'),
+('Performance_schema_program_lost', '0'),
+('Performance_schema_rwlock_classes_lost', '0'),
+('Performance_schema_rwlock_instances_lost', '0'),
+('Performance_schema_session_connect_attrs_longest_seen', '0'),
+('Performance_schema_session_connect_attrs_lost', '0'),
+('Performance_schema_socket_classes_lost', '0'),
+('Performance_schema_socket_instances_lost', '0'),
+('Performance_schema_stage_classes_lost', '0'),
+('Performance_schema_statement_classes_lost', '0'),
+('Performance_schema_table_handles_lost', '0'),
+('Performance_schema_table_instances_lost', '0'),
+('Performance_schema_table_lock_stat_lost', '0'),
+('Performance_schema_thread_classes_lost', '0'),
+('Performance_schema_thread_instances_lost', '0'),
+('Performance_schema_users_lost', '0'),
+('Prepared_stmt_count', '0'),
+('Queries', '1991793'),
+('Questions', '1991768'),
+('Replica_open_temp_tables', '0'),
+('Resource_group_supported', 'ON'),
+('Rsa_public_key', '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtiHexnOkFQWwLctF3sIQ\n2d8WWvPwd60VT5gfLcp16MdC/EvHXwqZADIReI9OEll1OUnvAHYgid0YzIZBi93T\n0UDx6CXoZrEHz/Ri8W3T4vpdLX1lVgOAhYWlW3nmRbHGwjdM7mtPlx7jmYe/1Bw2\nsl0Hnj7RzvNPhHwDAVMpWVJApiFOl6XtCCoDq0Zp0ze+1+62+K6752Kt7ufPJKWL\nTZU3Y8oFbCFFnchmdU1cz3A7clQWXAejL0BIuRGddNNEPnQrNjFjzJ9GgeVK4l3/\n2ZvCshWpYZ9RvzOoRJh/rbrYsm068fKMDiV5GSygDq2XOO3a0bYKqHxqGwdQzvri\n3wIDAQAB\n-----END PUBLIC KEY-----\n'),
+('Secondary_engine_execution_count', '0'),
+('Select_full_join', '937'),
+('Select_full_range_join', '221'),
+('Select_range', '156229'),
+('Select_range_check', '0'),
+('Select_scan', '102478'),
+('Slave_open_temp_tables', '0'),
+('Slow_launch_threads', '0'),
+('Slow_queries', '0'),
+('Sort_merge_passes', '0'),
+('Sort_range', '0'),
+('Sort_rows', '1380577'),
+('Sort_scan', '146572'),
+('Ssl_accept_renegotiates', '0'),
+('Ssl_accepts', '0'),
+('Ssl_callback_cache_hits', '0'),
+('Ssl_cipher', ''),
+('Ssl_cipher_list', ''),
+('Ssl_client_connects', '0'),
+('Ssl_connect_renegotiates', '0'),
+('Ssl_ctx_verify_depth', '4294967295'),
+('Ssl_ctx_verify_mode', '5'),
+('Ssl_default_timeout', '0'),
+('Ssl_finished_accepts', '0'),
+('Ssl_finished_connects', '0'),
+('Ssl_server_not_after', 'Nov 17 20:53:51 2035 GMT'),
+('Ssl_server_not_before', 'Nov 19 20:53:51 2025 GMT'),
+('Ssl_session_cache_hits', '0'),
+('Ssl_session_cache_misses', '0'),
+('Ssl_session_cache_mode', 'SERVER'),
+('Ssl_session_cache_overflows', '0'),
+('Ssl_session_cache_size', '128'),
+('Ssl_session_cache_timeout', '300'),
+('Ssl_session_cache_timeouts', '0'),
+('Ssl_sessions_reused', '0'),
+('Ssl_used_session_cache_entries', '0'),
+('Ssl_verify_depth', '0'),
+('Ssl_verify_mode', '0'),
+('Ssl_version', ''),
+('Table_locks_immediate', '248'),
+('Table_locks_waited', '0'),
+('Table_open_cache_hits', '2245053'),
+('Table_open_cache_misses', '1588'),
+('Table_open_cache_overflows', '0'),
+('Tc_log_max_pages_used', '0'),
+('Tc_log_page_size', '0'),
+('Tc_log_page_waits', '0'),
+('Telemetry_metrics_supported', 'ON'),
+('Telemetry_traces_supported', 'ON'),
+('Threads_cached', '2'),
+('Threads_connected', '2'),
+('Threads_created', '794'),
+('Threads_running', '2'),
+('Tls_library_version', 'OpenSSL 3.0.16 11 Feb 2025'),
+('Uptime', '1484142'),
+('Uptime_since_flush_status', '1484142');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `global_variables`
+--
+
+CREATE TABLE `global_variables` (
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `global_variables`
+--
+
+INSERT INTO `global_variables` (`VARIABLE_NAME`, `VARIABLE_VALUE`) VALUES
+('activate_all_roles_on_login', 'OFF'),
+('admin_address', ''),
+('admin_port', '33062'),
+('admin_ssl_ca', ''),
+('admin_ssl_capath', ''),
+('admin_ssl_cert', ''),
+('admin_ssl_cipher', ''),
+('admin_ssl_crl', ''),
+('admin_ssl_crlpath', ''),
+('admin_ssl_key', ''),
+('admin_tls_ciphersuites', ''),
+('admin_tls_version', 'TLSv1.2,TLSv1.3'),
+('authentication_policy', 'mysql_native_password,,'),
+('auto_generate_certs', 'ON'),
+('auto_increment_increment', '1'),
+('auto_increment_offset', '1'),
+('autocommit', 'ON'),
+('automatic_sp_privileges', 'ON'),
+('back_log', '128'),
+('basedir', 'D:\\OSPanel\\modules\\MySQL-8.4\\'),
+('big_tables', 'OFF'),
+('bind_address', '127.0.1.28'),
+('binlog_cache_size', '32768'),
+('binlog_checksum', 'CRC32'),
+('binlog_direct_non_transactional_updates', 'OFF'),
+('binlog_encryption', 'OFF'),
+('binlog_error_action', 'ABORT_SERVER'),
+('binlog_expire_logs_auto_purge', 'ON'),
+('binlog_expire_logs_seconds', '2592000'),
+('binlog_format', 'ROW'),
+('binlog_group_commit_sync_delay', '0'),
+('binlog_group_commit_sync_no_delay_count', '0'),
+('binlog_gtid_simple_recovery', 'ON'),
+('binlog_max_flush_queue_time', '0'),
+('binlog_order_commits', 'ON'),
+('binlog_rotate_encryption_master_key_at_startup', 'OFF'),
+('binlog_row_event_max_size', '8192'),
+('binlog_row_image', 'FULL'),
+('binlog_row_metadata', 'MINIMAL'),
+('binlog_row_value_options', ''),
+('binlog_rows_query_log_events', 'OFF'),
+('binlog_stmt_cache_size', '32768'),
+('binlog_transaction_compression', 'OFF'),
+('binlog_transaction_compression_level_zstd', '3'),
+('binlog_transaction_dependency_history_size', '25000'),
+('block_encryption_mode', 'aes-128-ecb'),
+('bulk_insert_buffer_size', '8388608'),
+('caching_sha2_password_auto_generate_rsa_keys', 'ON'),
+('caching_sha2_password_digest_rounds', '5000'),
+('caching_sha2_password_private_key_path', 'private_key.pem'),
+('caching_sha2_password_public_key_path', 'public_key.pem'),
+('character_set_client', 'utf8mb4'),
+('character_set_connection', 'utf8mb4'),
+('character_set_database', 'utf8mb4'),
+('character_set_filesystem', 'binary'),
+('character_set_results', 'utf8mb4'),
+('character_set_server', 'utf8mb4'),
+('character_set_system', 'utf8mb3'),
+('character_sets_dir', 'D:\\OSPanel\\modules\\MySQL-8.4\\share\\charsets\\'),
+('check_proxy_users', 'OFF'),
+('collation_connection', 'utf8mb4_0900_ai_ci'),
+('collation_database', 'utf8mb4_0900_ai_ci'),
+('collation_server', 'utf8mb4_0900_ai_ci'),
+('completion_type', 'NO_CHAIN'),
+('concurrent_insert', 'AUTO'),
+('connect_timeout', '10'),
+('connection_memory_chunk_size', '8192'),
+('connection_memory_limit', '18446744073709551615'),
+('core_file', 'OFF'),
+('create_admin_listener_thread', 'OFF'),
+('cte_max_recursion_depth', '1000'),
+('datadir', 'D:\\OSPanel\\data\\MySQL-8.4\\default\\'),
+('default_collation_for_utf8mb4', 'utf8mb4_0900_ai_ci'),
+('default_password_lifetime', '0'),
+('default_storage_engine', 'InnoDB'),
+('default_table_encryption', 'OFF'),
+('default_tmp_storage_engine', 'InnoDB'),
+('default_week_format', '0'),
+('delay_key_write', 'ON'),
+('delayed_insert_limit', '100'),
+('delayed_insert_timeout', '300'),
+('delayed_queue_size', '1000'),
+('disabled_storage_engines', ''),
+('disconnect_on_expired_password', 'ON'),
+('div_precision_increment', '4'),
+('end_markers_in_json', 'OFF'),
+('enforce_gtid_consistency', 'OFF'),
+('eq_range_index_dive_limit', '200'),
+('event_scheduler', 'ON'),
+('explain_format', 'TRADITIONAL'),
+('explain_json_format_version', '1'),
+('explicit_defaults_for_timestamp', 'ON'),
+('flush', 'OFF'),
+('flush_time', '0'),
+('foreign_key_checks', 'ON'),
+('ft_boolean_syntax', '+ -><()~*:\"\"&|'),
+('ft_max_word_len', '84'),
+('ft_min_word_len', '3'),
+('ft_query_expansion_limit', '20'),
+('ft_stopword_file', '(built-in)'),
+('general_log', 'OFF'),
+('general_log_file', 'D:/OSPanel/logs/MySQL-8.4/query_log.log'),
+('generated_random_password_length', '20'),
+('global_connection_memory_limit', '18446744073709551615'),
+('global_connection_memory_tracking', 'OFF'),
+('group_concat_max_len', '1024'),
+('group_replication_consistency', 'BEFORE_ON_PRIMARY_FAILOVER'),
+('gtid_executed', ''),
+('gtid_executed_compression_period', '0'),
+('gtid_mode', 'OFF'),
+('gtid_owned', ''),
+('gtid_purged', ''),
+('have_compress', 'YES'),
+('have_dynamic_loading', 'YES'),
+('have_geometry', 'YES'),
+('have_profiling', 'YES'),
+('have_query_cache', 'NO'),
+('have_rtree_keys', 'YES'),
+('have_statement_timeout', 'YES'),
+('have_symlink', 'DISABLED'),
+('histogram_generation_max_mem_size', '20000000'),
+('host_cache_size', '256'),
+('hostname', 'Ekaterina'),
+('information_schema_stats_expiry', '86400'),
+('init_connect', ''),
+('init_file', ''),
+('init_replica', ''),
+('init_slave', ''),
+('innodb_adaptive_flushing', 'ON'),
+('innodb_adaptive_flushing_lwm', '10'),
+('innodb_adaptive_hash_index', 'OFF'),
+('innodb_adaptive_hash_index_parts', '8'),
+('innodb_adaptive_max_sleep_delay', '150000'),
+('innodb_api_bk_commit_interval', '5'),
+('innodb_api_disable_rowlock', 'OFF'),
+('innodb_api_enable_binlog', 'OFF'),
+('innodb_api_enable_mdl', 'OFF'),
+('innodb_api_trx_level', '0'),
+('innodb_autoextend_increment', '64'),
+('innodb_autoinc_lock_mode', '2'),
+('innodb_buffer_pool_chunk_size', '134217728'),
+('innodb_buffer_pool_dump_at_shutdown', 'ON'),
+('innodb_buffer_pool_dump_now', 'OFF'),
+('innodb_buffer_pool_dump_pct', '25'),
+('innodb_buffer_pool_filename', 'ib_buffer_pool'),
+('innodb_buffer_pool_in_core_file', 'ON'),
+('innodb_buffer_pool_instances', '1'),
+('innodb_buffer_pool_load_abort', 'OFF'),
+('innodb_buffer_pool_load_at_startup', 'ON'),
+('innodb_buffer_pool_load_now', 'OFF'),
+('innodb_buffer_pool_size', '536870912'),
+('innodb_change_buffer_max_size', '25'),
+('innodb_change_buffering', 'none'),
+('innodb_checksum_algorithm', 'crc32'),
+('innodb_cmp_per_index_enabled', 'OFF'),
+('innodb_commit_concurrency', '0'),
+('innodb_compression_failure_threshold_pct', '5'),
+('innodb_compression_level', '6'),
+('innodb_compression_pad_pct_max', '50'),
+('innodb_concurrency_tickets', '5000'),
+('innodb_data_file_path', 'ibdata1:12M:autoextend'),
+('innodb_data_home_dir', 'D:\\OSPanel\\data\\MySQL-8.4\\default'),
+('innodb_ddl_buffer_size', '1048576'),
+('innodb_ddl_threads', '4'),
+('innodb_deadlock_detect', 'ON'),
+('innodb_dedicated_server', 'OFF'),
+('innodb_default_row_format', 'dynamic'),
+('innodb_directories', ''),
+('innodb_disable_sort_file_cache', 'OFF'),
+('innodb_doublewrite', 'ON'),
+('innodb_doublewrite_batch_size', '0'),
+('innodb_doublewrite_dir', ''),
+('innodb_doublewrite_files', '2'),
+('innodb_doublewrite_pages', '128'),
+('innodb_extend_and_initialize', 'ON'),
+('innodb_fast_shutdown', '1'),
+('innodb_file_per_table', 'ON'),
+('innodb_fill_factor', '100'),
+('innodb_flush_log_at_timeout', '1'),
+('innodb_flush_log_at_trx_commit', '1'),
+('innodb_flush_method', 'unbuffered'),
+('innodb_flush_neighbors', '0'),
+('innodb_flush_sync', 'ON'),
+('innodb_flushing_avg_loops', '30'),
+('innodb_force_load_corrupted', 'OFF'),
+('innodb_force_recovery', '0'),
+('innodb_fsync_threshold', '0'),
+('innodb_ft_aux_table', ''),
+('innodb_ft_cache_size', '8000000'),
+('innodb_ft_enable_diag_print', 'OFF'),
+('innodb_ft_enable_stopword', 'ON'),
+('innodb_ft_max_token_size', '84'),
+('innodb_ft_min_token_size', '3'),
+('innodb_ft_num_word_optimize', '2000'),
+('innodb_ft_result_cache_limit', '2000000000'),
+('innodb_ft_server_stopword_table', ''),
+('innodb_ft_sort_pll_degree', '2'),
+('innodb_ft_total_cache_size', '640000000'),
+('innodb_ft_user_stopword_table', ''),
+('innodb_idle_flush_pct', '100'),
+('innodb_io_capacity', '10000'),
+('innodb_io_capacity_max', '20000'),
+('innodb_lock_wait_timeout', '50'),
+('innodb_log_buffer_size', '67108864'),
+('innodb_log_checksums', 'ON'),
+('innodb_log_compressed_pages', 'ON'),
+('innodb_log_file_size', '50331648'),
+('innodb_log_files_in_group', '2'),
+('innodb_log_group_home_dir', '.\\'),
+('innodb_log_spin_cpu_abs_lwm', '80'),
+('innodb_log_spin_cpu_pct_hwm', '50'),
+('innodb_log_wait_for_flush_spin_hwm', '400'),
+('innodb_log_write_ahead_size', '8192'),
+('innodb_log_writer_threads', 'ON'),
+('innodb_lru_scan_depth', '1024'),
+('innodb_max_dirty_pages_pct', '90.000000'),
+('innodb_max_dirty_pages_pct_lwm', '10.000000'),
+('innodb_max_purge_lag', '0'),
+('innodb_max_purge_lag_delay', '0'),
+('innodb_max_undo_log_size', '1073741824'),
+('innodb_monitor_disable', ''),
+('innodb_monitor_enable', ''),
+('innodb_monitor_reset', ''),
+('innodb_monitor_reset_all', ''),
+('innodb_old_blocks_pct', '37'),
+('innodb_old_blocks_time', '1000'),
+('innodb_online_alter_log_max_size', '134217728'),
+('innodb_open_files', '4096'),
+('innodb_optimize_fulltext_only', 'OFF'),
+('innodb_page_cleaners', '1'),
+('innodb_page_size', '16384'),
+('innodb_parallel_read_threads', '4'),
+('innodb_print_all_deadlocks', 'OFF'),
+('innodb_print_ddl_logs', 'OFF'),
+('innodb_purge_batch_size', '300'),
+('innodb_purge_rseg_truncate_frequency', '128'),
+('innodb_purge_threads', '1'),
+('innodb_random_read_ahead', 'OFF'),
+('innodb_read_ahead_threshold', '56'),
+('innodb_read_io_threads', '4'),
+('innodb_read_only', 'OFF'),
+('innodb_redo_log_archive_dirs', ''),
+('innodb_redo_log_capacity', '104857600'),
+('innodb_redo_log_encrypt', 'OFF'),
+('innodb_replication_delay', '0'),
+('innodb_rollback_on_timeout', 'OFF'),
+('innodb_rollback_segments', '128'),
+('innodb_segment_reserve_factor', '12.500000'),
+('innodb_sort_buffer_size', '1048576'),
+('innodb_spin_wait_delay', '6'),
+('innodb_spin_wait_pause_multiplier', '50'),
+('innodb_stats_auto_recalc', 'ON'),
+('innodb_stats_include_delete_marked', 'OFF'),
+('innodb_stats_method', 'nulls_equal'),
+('innodb_stats_on_metadata', 'OFF'),
+('innodb_stats_persistent', 'ON'),
+('innodb_stats_persistent_sample_pages', '20'),
+('innodb_stats_transient_sample_pages', '8'),
+('innodb_status_output', 'OFF'),
+('innodb_status_output_locks', 'OFF'),
+('innodb_strict_mode', 'ON'),
+('innodb_sync_array_size', '1'),
+('innodb_sync_spin_loops', '30'),
+('innodb_table_locks', 'ON'),
+('innodb_temp_data_file_path', 'ibtmp1:12M:autoextend'),
+('innodb_temp_tablespaces_dir', '.\\#innodb_temp\\'),
+('innodb_thread_concurrency', '0'),
+('innodb_thread_sleep_delay', '10000'),
+('innodb_tmpdir', ''),
+('innodb_undo_directory', '.\\'),
+('innodb_undo_log_encrypt', 'OFF'),
+('innodb_undo_log_truncate', 'ON'),
+('innodb_undo_tablespaces', '2'),
+('innodb_use_fdatasync', 'ON'),
+('innodb_use_native_aio', 'ON'),
+('innodb_validate_tablespace_paths', 'ON'),
+('innodb_version', '8.4.6'),
+('innodb_write_io_threads', '4'),
+('interactive_timeout', '28800'),
+('internal_tmp_mem_storage_engine', 'TempTable'),
+('join_buffer_size', '262144'),
+('keep_files_on_create', 'OFF'),
+('key_buffer_size', '33554432'),
+('key_cache_age_threshold', '300'),
+('key_cache_block_size', '1024'),
+('key_cache_division_limit', '100'),
+('keyring_operations', 'ON'),
+('large_files_support', 'ON'),
+('large_page_size', '0'),
+('large_pages', 'OFF'),
+('lc_messages', 'en_US'),
+('lc_messages_dir', 'D:\\OSPanel\\modules\\MySQL-8.4\\share\\'),
+('lc_time_names', 'en_US'),
+('license', 'GPL'),
+('local_infile', 'ON'),
+('lock_wait_timeout', '31536000'),
+('log_bin', 'OFF'),
+('log_bin_basename', ''),
+('log_bin_index', ''),
+('log_bin_trust_function_creators', 'OFF'),
+('log_error', 'stderr'),
+('log_error_services', 'log_filter_internal; log_sink_internal'),
+('log_error_suppression_list', ''),
+('log_error_verbosity', '3'),
+('log_output', 'FILE'),
+('log_queries_not_using_indexes', 'OFF'),
+('log_raw', 'OFF'),
+('log_replica_updates', 'OFF'),
+('log_slave_updates', 'OFF'),
+('log_slow_admin_statements', 'OFF'),
+('log_slow_extra', 'OFF'),
+('log_slow_replica_statements', 'OFF'),
+('log_slow_slave_statements', 'OFF'),
+('log_statements_unsafe_for_binlog', 'ON'),
+('log_throttle_queries_not_using_indexes', '0'),
+('log_timestamps', 'SYSTEM'),
+('long_query_time', '10.000000'),
+('low_priority_updates', 'OFF'),
+('lower_case_file_system', 'ON'),
+('lower_case_table_names', '2'),
+('mandatory_roles', ''),
+('master_verify_checksum', 'OFF'),
+('max_allowed_packet', '67108864'),
+('max_binlog_cache_size', '18446744073709547520'),
+('max_binlog_size', '1073741824'),
+('max_binlog_stmt_cache_size', '18446744073709547520'),
+('max_connect_errors', '32'),
+('max_connections', '128'),
+('max_delayed_threads', '20'),
+('max_digest_length', '1024'),
+('max_error_count', '1024'),
+('max_execution_time', '0'),
+('max_heap_table_size', '134217728'),
+('max_insert_delayed_threads', '20'),
+('max_join_size', '18446744073709551615'),
+('max_length_for_sort_data', '4096'),
+('max_points_in_geometry', '65536'),
+('max_prepared_stmt_count', '16382'),
+('max_relay_log_size', '0'),
+('max_seeks_for_key', '4294967295'),
+('max_sort_length', '1024'),
+('max_sp_recursion_depth', '0'),
+('max_user_connections', '0'),
+('max_write_lock_count', '4294967295'),
+('min_examined_row_limit', '0'),
+('myisam_data_pointer_size', '6'),
+('myisam_max_sort_file_size', '2146435072'),
+('myisam_mmap_size', '18446744073709551615'),
+('myisam_recover_options', 'BACKUP,FORCE'),
+('myisam_sort_buffer_size', '8388608'),
+('myisam_stats_method', 'nulls_unequal'),
+('myisam_use_mmap', 'OFF'),
+('mysql_native_password_proxy_users', 'OFF'),
+('mysqlx_bind_address', '127.0.1.28'),
+('mysqlx_compression_algorithms', 'DEFLATE_STREAM,LZ4_MESSAGE,ZSTD_STREAM'),
+('mysqlx_connect_timeout', '30'),
+('mysqlx_deflate_default_compression_level', '3'),
+('mysqlx_deflate_max_client_compression_level', '5'),
+('mysqlx_document_id_unique_prefix', '0'),
+('mysqlx_enable_hello_notice', 'ON'),
+('mysqlx_idle_worker_thread_timeout', '60'),
+('mysqlx_interactive_timeout', '28800'),
+('mysqlx_lz4_default_compression_level', '2'),
+('mysqlx_lz4_max_client_compression_level', '8'),
+('mysqlx_max_allowed_packet', '67108864'),
+('mysqlx_max_connections', '100'),
+('mysqlx_min_worker_threads', '2'),
+('mysqlx_port', '33060'),
+('mysqlx_port_open_timeout', '0'),
+('mysqlx_read_timeout', '30'),
+('mysqlx_socket', 'MySQL-8.4-X'),
+('mysqlx_ssl_ca', 'D:/OSPanel/data/ssl/cacert.pem'),
+('mysqlx_ssl_capath', ''),
+('mysqlx_ssl_cert', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.crt'),
+('mysqlx_ssl_cipher', ''),
+('mysqlx_ssl_crl', ''),
+('mysqlx_ssl_crlpath', ''),
+('mysqlx_ssl_key', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.key'),
+('mysqlx_wait_timeout', '28800'),
+('mysqlx_write_timeout', '60'),
+('mysqlx_zstd_default_compression_level', '3'),
+('mysqlx_zstd_max_client_compression_level', '11'),
+('named_pipe', 'ON'),
+('named_pipe_full_access_group', ''),
+('net_buffer_length', '16384'),
+('net_read_timeout', '30'),
+('net_retry_count', '10'),
+('net_write_timeout', '60'),
+('ngram_token_size', '2'),
+('offline_mode', 'OFF'),
+('old_alter_table', 'OFF'),
+('open_files_limit', '10378'),
+('optimizer_max_subgraph_pairs', '100000'),
+('optimizer_prune_level', '1'),
+('optimizer_search_depth', '62'),
+('optimizer_switch', 'index_merge=on,index_merge_union=on,index_merge_sort_union=on,index_merge_intersection=on,engine_condition_pushdown=on,index_condition_pushdown=on,mrr=on,mrr_cost_based=on,block_nested_loop=on,batched_key_access=off,materialization=on,semijoin=on,loosescan=on,firstmatch=on,duplicateweedout=on,subquery_materialization_cost_based=on,use_index_extensions=on,condition_fanout_filter=on,derived_merge=on,use_invisible_indexes=off,skip_scan=on,hash_join=on,subquery_to_derived=off,prefer_ordering_index=on,hypergraph_optimizer=off,derived_condition_pushdown=on,hash_set_operations=on'),
+('optimizer_trace', 'enabled=off,one_line=off'),
+('optimizer_trace_features', 'greedy_search=on,range_optimizer=on,dynamic_range=on,repeated_subselect=on'),
+('optimizer_trace_limit', '1'),
+('optimizer_trace_max_mem_size', '1048576'),
+('optimizer_trace_offset', '-1'),
+('parser_max_mem_size', '18446744073709551615'),
+('partial_revokes', 'OFF'),
+('password_history', '0'),
+('password_require_current', 'OFF'),
+('password_reuse_interval', '0'),
+('performance_schema', 'OFF'),
+('performance_schema_accounts_size', '0'),
+('performance_schema_digests_size', '0'),
+('performance_schema_error_size', '5548'),
+('performance_schema_events_stages_history_long_size', '0'),
+('performance_schema_events_stages_history_size', '0'),
+('performance_schema_events_statements_history_long_size', '0'),
+('performance_schema_events_statements_history_size', '0'),
+('performance_schema_events_transactions_history_long_size', '0'),
+('performance_schema_events_transactions_history_size', '0'),
+('performance_schema_events_waits_history_long_size', '0'),
+('performance_schema_events_waits_history_size', '0'),
+('performance_schema_hosts_size', '0'),
+('performance_schema_max_cond_classes', '0'),
+('performance_schema_max_cond_instances', '0'),
+('performance_schema_max_digest_length', '0'),
+('performance_schema_max_digest_sample_age', '60'),
+('performance_schema_max_file_classes', '0'),
+('performance_schema_max_file_handles', '0'),
+('performance_schema_max_file_instances', '0'),
+('performance_schema_max_index_stat', '0'),
+('performance_schema_max_memory_classes', '0'),
+('performance_schema_max_metadata_locks', '0'),
+('performance_schema_max_meter_classes', '0'),
+('performance_schema_max_metric_classes', '0'),
+('performance_schema_max_mutex_classes', '0'),
+('performance_schema_max_mutex_instances', '0'),
+('performance_schema_max_prepared_statements_instances', '0'),
+('performance_schema_max_program_instances', '0'),
+('performance_schema_max_rwlock_classes', '0'),
+('performance_schema_max_rwlock_instances', '0'),
+('performance_schema_max_socket_classes', '0'),
+('performance_schema_max_socket_instances', '0'),
+('performance_schema_max_sql_text_length', '0'),
+('performance_schema_max_stage_classes', '0'),
+('performance_schema_max_statement_classes', '0'),
+('performance_schema_max_statement_stack', '0'),
+('performance_schema_max_table_handles', '0'),
+('performance_schema_max_table_instances', '0'),
+('performance_schema_max_table_lock_stat', '0'),
+('performance_schema_max_thread_classes', '0'),
+('performance_schema_max_thread_instances', '0'),
+('performance_schema_session_connect_attrs_size', '0'),
+('performance_schema_setup_actors_size', '0'),
+('performance_schema_setup_objects_size', '0'),
+('performance_schema_show_processlist', 'OFF'),
+('performance_schema_users_size', '0'),
+('persist_only_admin_x509_subject', ''),
+('persist_sensitive_variables_in_plaintext', 'ON'),
+('persisted_globals_load', 'ON'),
+('pid_file', 'D:/OSPanel/temp/MySQL-8.4.pid'),
+('plugin_dir', 'D:\\OSPanel\\modules\\MySQL-8.4\\lib\\plugin\\'),
+('port', '3306'),
+('preload_buffer_size', '32768'),
+('print_identified_with_as_hex', 'OFF'),
+('profiling', 'OFF'),
+('profiling_history_size', '15'),
+('protocol_compression_algorithms', 'zlib,zstd,uncompressed'),
+('protocol_version', '10'),
+('query_alloc_block_size', '8192'),
+('query_prealloc_size', '8192'),
+('range_alloc_block_size', '4096'),
+('range_optimizer_max_mem_size', '8388608'),
+('rbr_exec_mode', 'STRICT'),
+('read_buffer_size', '131072'),
+('read_only', 'OFF'),
+('read_rnd_buffer_size', '262144'),
+('regexp_stack_limit', '8000000'),
+('regexp_time_limit', '32'),
+('relay_log', 'Ekaterina-relay-bin'),
+('relay_log_basename', 'D:\\OSPanel\\data\\MySQL-8.4\\default\\Ekaterina-relay-bin'),
+('relay_log_index', 'D:\\OSPanel\\data\\MySQL-8.4\\default\\Ekaterina-relay-bin.index'),
+('relay_log_purge', 'ON'),
+('relay_log_recovery', 'OFF'),
+('relay_log_space_limit', '0'),
+('replica_allow_batching', 'ON'),
+('replica_checkpoint_group', '512'),
+('replica_checkpoint_period', '300'),
+('replica_compressed_protocol', 'OFF'),
+('replica_exec_mode', 'STRICT'),
+('replica_load_tmpdir', 'D:\\OSPanel\\temp\\MySQL-8.4\\default'),
+('replica_max_allowed_packet', '1073741824'),
+('replica_net_timeout', '60'),
+('replica_parallel_type', 'LOGICAL_CLOCK'),
+('replica_parallel_workers', '4'),
+('replica_pending_jobs_size_max', '134217728'),
+('replica_preserve_commit_order', 'ON'),
+('replica_skip_errors', 'OFF'),
+('replica_sql_verify_checksum', 'ON'),
+('replica_transaction_retries', '10'),
+('replica_type_conversions', ''),
+('replication_optimize_for_static_plugin_config', 'OFF'),
+('replication_sender_observe_commit_only', 'OFF'),
+('report_host', ''),
+('report_password', ''),
+('report_port', '3306'),
+('report_user', ''),
+('require_secure_transport', 'OFF'),
+('restrict_fk_on_non_standard_key', 'ON'),
+('rpl_read_size', '8192'),
+('rpl_stop_replica_timeout', '31536000'),
+('rpl_stop_slave_timeout', '31536000'),
+('schema_definition_cache', '256'),
+('secondary_engine_cost_threshold', '100000.000000'),
+('secure_file_priv', 'D:\\OSPanel\\temp\\upload\\'),
+('select_into_buffer_size', '131072'),
+('select_into_disk_sync', 'OFF'),
+('select_into_disk_sync_delay', '0'),
+('server_id', '1'),
+('server_id_bits', '32'),
+('server_uuid', 'aad6c3d3-ac00-11f0-8615-7ced8d07332a'),
+('session_track_gtids', 'OFF'),
+('session_track_schema', 'ON'),
+('session_track_state_change', 'OFF'),
+('session_track_system_variables', 'time_zone,autocommit,character_set_client,character_set_results,character_set_connection'),
+('session_track_transaction_info', 'OFF'),
+('set_operations_buffer_size', '262144'),
+('sha256_password_auto_generate_rsa_keys', 'ON'),
+('sha256_password_private_key_path', 'private_key.pem'),
+('sha256_password_proxy_users', 'OFF'),
+('sha256_password_public_key_path', 'public_key.pem'),
+('shared_memory', 'OFF'),
+('shared_memory_base_name', 'MYSQL'),
+('show_create_table_verbosity', 'OFF'),
+('show_gipk_in_create_table_and_information_schema', 'ON'),
+('skip_external_locking', 'ON'),
+('skip_name_resolve', 'OFF'),
+('skip_networking', 'OFF'),
+('skip_replica_start', 'OFF'),
+('skip_show_database', 'OFF'),
+('skip_slave_start', 'OFF'),
+('slave_allow_batching', 'ON'),
+('slave_checkpoint_group', '512'),
+('slave_checkpoint_period', '300'),
+('slave_compressed_protocol', 'OFF'),
+('slave_exec_mode', 'STRICT'),
+('slave_load_tmpdir', 'D:\\OSPanel\\temp\\MySQL-8.4\\default'),
+('slave_max_allowed_packet', '1073741824'),
+('slave_net_timeout', '60'),
+('slave_parallel_type', 'LOGICAL_CLOCK'),
+('slave_parallel_workers', '4'),
+('slave_pending_jobs_size_max', '134217728'),
+('slave_preserve_commit_order', 'ON'),
+('slave_skip_errors', 'OFF'),
+('slave_sql_verify_checksum', 'ON'),
+('slave_transaction_retries', '10'),
+('slave_type_conversions', ''),
+('slow_launch_time', '2'),
+('slow_query_log', 'OFF'),
+('slow_query_log_file', 'D:\\OSPanel\\data\\MySQL-8.4\\default\\Ekaterina-slow.log'),
+('socket', 'MySQL-8.4'),
+('sort_buffer_size', '262144'),
+('source_verify_checksum', 'OFF'),
+('sql_auto_is_null', 'OFF'),
+('sql_big_selects', 'ON'),
+('sql_buffer_result', 'OFF'),
+('sql_generate_invisible_primary_key', 'OFF'),
+('sql_log_off', 'OFF'),
+('sql_mode', 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'),
+('sql_notes', 'ON'),
+('sql_quote_show_create', 'ON'),
+('sql_replica_skip_counter', '0'),
+('sql_require_primary_key', 'OFF'),
+('sql_safe_updates', 'OFF'),
+('sql_select_limit', '18446744073709551615'),
+('sql_slave_skip_counter', '0'),
+('sql_warnings', 'OFF'),
+('ssl_ca', 'D:/OSPanel/data/ssl/cacert.pem'),
+('ssl_capath', ''),
+('ssl_cert', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.crt'),
+('ssl_cipher', ''),
+('ssl_crl', ''),
+('ssl_crlpath', ''),
+('ssl_fips_mode', 'OFF'),
+('ssl_key', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.key'),
+('ssl_session_cache_mode', 'ON'),
+('ssl_session_cache_timeout', '300'),
+('stored_program_cache', '256'),
+('stored_program_definition_cache', '256'),
+('super_read_only', 'OFF'),
+('sync_binlog', '1'),
+('sync_master_info', '10000'),
+('sync_relay_log', '10000'),
+('sync_relay_log_info', '10000'),
+('sync_source_info', '10000'),
+('system_time_zone', 'Etc'),
+('table_definition_cache', '4096'),
+('table_encryption_privilege_check', 'OFF'),
+('table_open_cache', '4096'),
+('table_open_cache_instances', '16'),
+('tablespace_definition_cache', '256'),
+('temptable_max_mmap', '0'),
+('temptable_max_ram', '1073741824'),
+('temptable_use_mmap', 'OFF'),
+('terminology_use_previous', 'NONE'),
+('thread_cache_size', '4'),
+('thread_handling', 'one-thread-per-connection'),
+('thread_stack', '1048576'),
+('time_zone', 'Etc/GMT-3'),
+('tls_certificates_enforced_validation', 'OFF'),
+('tls_ciphersuites', ''),
+('tls_version', 'TLSv1.2,TLSv1.3'),
+('tmp_table_size', '16777216'),
+('tmpdir', 'D:/OSPanel/temp/MySQL-8.4/default'),
+('transaction_alloc_block_size', '8192'),
+('transaction_isolation', 'REPEATABLE-READ'),
+('transaction_prealloc_size', '4096'),
+('transaction_read_only', 'OFF'),
+('unique_checks', 'ON'),
+('updatable_views_with_limit', 'YES'),
+('version', '8.4.6'),
+('version_comment', 'MySQL Community Server - GPL'),
+('version_compile_machine', 'x86_64'),
+('version_compile_os', 'Win64'),
+('version_compile_zlib', '1.3.1'),
+('wait_timeout', '28800'),
+('windowing_use_high_precision', 'ON'),
+('xa_detach_on_prepare', 'ON');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `hosts`
+--
+
+CREATE TABLE `hosts` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `CURRENT_CONNECTIONS` bigint NOT NULL,
+  `TOTAL_CONNECTIONS` bigint NOT NULL,
+  `MAX_SESSION_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_SESSION_TOTAL_MEMORY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `host_cache`
+--
+
+CREATE TABLE `host_cache` (
+  `IP` varchar(64) NOT NULL,
+  `HOST` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `HOST_VALIDATED` enum('YES','NO') NOT NULL,
+  `SUM_CONNECT_ERRORS` bigint NOT NULL,
+  `COUNT_HOST_BLOCKED_ERRORS` bigint NOT NULL,
+  `COUNT_NAMEINFO_TRANSIENT_ERRORS` bigint NOT NULL,
+  `COUNT_NAMEINFO_PERMANENT_ERRORS` bigint NOT NULL,
+  `COUNT_FORMAT_ERRORS` bigint NOT NULL,
+  `COUNT_ADDRINFO_TRANSIENT_ERRORS` bigint NOT NULL,
+  `COUNT_ADDRINFO_PERMANENT_ERRORS` bigint NOT NULL,
+  `COUNT_FCRDNS_ERRORS` bigint NOT NULL,
+  `COUNT_HOST_ACL_ERRORS` bigint NOT NULL,
+  `COUNT_NO_AUTH_PLUGIN_ERRORS` bigint NOT NULL,
+  `COUNT_AUTH_PLUGIN_ERRORS` bigint NOT NULL,
+  `COUNT_HANDSHAKE_ERRORS` bigint NOT NULL,
+  `COUNT_PROXY_USER_ERRORS` bigint NOT NULL,
+  `COUNT_PROXY_USER_ACL_ERRORS` bigint NOT NULL,
+  `COUNT_AUTHENTICATION_ERRORS` bigint NOT NULL,
+  `COUNT_SSL_ERRORS` bigint NOT NULL,
+  `COUNT_MAX_USER_CONNECTIONS_ERRORS` bigint NOT NULL,
+  `COUNT_MAX_USER_CONNECTIONS_PER_HOUR_ERRORS` bigint NOT NULL,
+  `COUNT_DEFAULT_DATABASE_ERRORS` bigint NOT NULL,
+  `COUNT_INIT_CONNECT_ERRORS` bigint NOT NULL,
+  `COUNT_LOCAL_ERRORS` bigint NOT NULL,
+  `COUNT_UNKNOWN_ERRORS` bigint NOT NULL,
+  `FIRST_SEEN` timestamp NOT NULL,
+  `LAST_SEEN` timestamp NOT NULL,
+  `FIRST_ERROR_SEEN` timestamp NULL DEFAULT NULL,
+  `LAST_ERROR_SEEN` timestamp NULL DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `innodb_redo_log_files`
+--
+
+CREATE TABLE `innodb_redo_log_files` (
+  `FILE_ID` bigint NOT NULL COMMENT 'Id of the file.',
+  `FILE_NAME` varchar(2000) NOT NULL COMMENT 'Path to the file.',
+  `START_LSN` bigint NOT NULL COMMENT 'LSN of the first block in the file.',
+  `END_LSN` bigint NOT NULL COMMENT 'LSN after the last block in the file.',
+  `SIZE_IN_BYTES` bigint NOT NULL COMMENT 'Size of the file (in bytes).',
+  `IS_FULL` tinyint NOT NULL COMMENT '1 iff file has no free space inside.',
+  `CONSUMER_LEVEL` int NOT NULL COMMENT 'All redo log consumers registered on smaller levels than this value, have already consumed this file.'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `innodb_redo_log_files`
+--
+
+INSERT INTO `innodb_redo_log_files` (`FILE_ID`, `FILE_NAME`, `START_LSN`, `END_LSN`, `SIZE_IN_BYTES`, `IS_FULL`, `CONSUMER_LEVEL`) VALUES
+(127, '.\\#innodb_redo\\#ib_redo127', 415901696, 419176448, 3276800, 1, 0),
+(128, '.\\#innodb_redo\\#ib_redo128', 419176448, 422451200, 3276800, 1, 0),
+(129, '.\\#innodb_redo\\#ib_redo129', 422451200, 425725952, 3276800, 1, 0),
+(130, '.\\#innodb_redo\\#ib_redo130', 425725952, 429000704, 3276800, 1, 0),
+(131, '.\\#innodb_redo\\#ib_redo131', 429000704, 432275456, 3276800, 1, 0),
+(132, '.\\#innodb_redo\\#ib_redo132', 432275456, 435550208, 3276800, 1, 0),
+(133, '.\\#innodb_redo\\#ib_redo133', 435550208, 438824960, 3276800, 1, 0),
+(134, '.\\#innodb_redo\\#ib_redo134', 438824960, 442099712, 3276800, 1, 0),
+(135, '.\\#innodb_redo\\#ib_redo135', 442099712, 445374464, 3276800, 1, 0),
+(136, '.\\#innodb_redo\\#ib_redo136', 445374464, 448649216, 3276800, 1, 0),
+(137, '.\\#innodb_redo\\#ib_redo137', 448649216, 451923968, 3276800, 1, 0),
+(138, '.\\#innodb_redo\\#ib_redo138', 451923968, 455198720, 3276800, 1, 0),
+(139, '.\\#innodb_redo\\#ib_redo139', 455198720, 458473472, 3276800, 1, 0),
+(140, '.\\#innodb_redo\\#ib_redo140', 458473472, 461748224, 3276800, 1, 0),
+(141, '.\\#innodb_redo\\#ib_redo141', 461748224, 465022976, 3276800, 1, 0),
+(142, '.\\#innodb_redo\\#ib_redo142', 465022976, 468297728, 3276800, 1, 0),
+(143, '.\\#innodb_redo\\#ib_redo143', 468297728, 471572480, 3276800, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `keyring_component_status`
+--
+
+CREATE TABLE `keyring_component_status` (
+  `STATUS_KEY` varchar(256) NOT NULL,
+  `STATUS_VALUE` varchar(1024) NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `keyring_keys`
+--
+
+CREATE TABLE `keyring_keys` (
+  `KEY_ID` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `KEY_OWNER` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `BACKEND_KEY_ID` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `log_status`
+--
+
+CREATE TABLE `log_status` (
+  `SERVER_UUID` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `LOCAL` json NOT NULL,
+  `REPLICATION` json NOT NULL,
+  `STORAGE_ENGINES` json NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `log_status`
+--
+
+INSERT INTO `log_status` (`SERVER_UUID`, `LOCAL`, `REPLICATION`, `STORAGE_ENGINES`) VALUES
+('aad6c3d3-ac00-11f0-8615-7ced8d07332a', '{\"gtid_executed\": \"\"}', '{\"channels\": []}', '{\"InnoDB\": {\"LSN\": 470557852, \"LSN_checkpoint\": 470557852}}');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `memory_summary_by_account_by_event_name`
+--
+
+CREATE TABLE `memory_summary_by_account_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_ALLOC` bigint UNSIGNED NOT NULL,
+  `COUNT_FREE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_ALLOC` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_FREE` bigint UNSIGNED NOT NULL,
+  `LOW_COUNT_USED` bigint NOT NULL,
+  `CURRENT_COUNT_USED` bigint NOT NULL,
+  `HIGH_COUNT_USED` bigint NOT NULL,
+  `LOW_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `CURRENT_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `HIGH_NUMBER_OF_BYTES_USED` bigint NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `memory_summary_by_host_by_event_name`
+--
+
+CREATE TABLE `memory_summary_by_host_by_event_name` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_ALLOC` bigint UNSIGNED NOT NULL,
+  `COUNT_FREE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_ALLOC` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_FREE` bigint UNSIGNED NOT NULL,
+  `LOW_COUNT_USED` bigint NOT NULL,
+  `CURRENT_COUNT_USED` bigint NOT NULL,
+  `HIGH_COUNT_USED` bigint NOT NULL,
+  `LOW_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `CURRENT_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `HIGH_NUMBER_OF_BYTES_USED` bigint NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `memory_summary_by_thread_by_event_name`
+--
+
+CREATE TABLE `memory_summary_by_thread_by_event_name` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_ALLOC` bigint UNSIGNED NOT NULL,
+  `COUNT_FREE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_ALLOC` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_FREE` bigint UNSIGNED NOT NULL,
+  `LOW_COUNT_USED` bigint NOT NULL,
+  `CURRENT_COUNT_USED` bigint NOT NULL,
+  `HIGH_COUNT_USED` bigint NOT NULL,
+  `LOW_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `CURRENT_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `HIGH_NUMBER_OF_BYTES_USED` bigint NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `memory_summary_by_user_by_event_name`
+--
+
+CREATE TABLE `memory_summary_by_user_by_event_name` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_ALLOC` bigint UNSIGNED NOT NULL,
+  `COUNT_FREE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_ALLOC` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_FREE` bigint UNSIGNED NOT NULL,
+  `LOW_COUNT_USED` bigint NOT NULL,
+  `CURRENT_COUNT_USED` bigint NOT NULL,
+  `HIGH_COUNT_USED` bigint NOT NULL,
+  `LOW_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `CURRENT_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `HIGH_NUMBER_OF_BYTES_USED` bigint NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `memory_summary_global_by_event_name`
+--
+
+CREATE TABLE `memory_summary_global_by_event_name` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_ALLOC` bigint UNSIGNED NOT NULL,
+  `COUNT_FREE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_ALLOC` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_FREE` bigint UNSIGNED NOT NULL,
+  `LOW_COUNT_USED` bigint NOT NULL,
+  `CURRENT_COUNT_USED` bigint NOT NULL,
+  `HIGH_COUNT_USED` bigint NOT NULL,
+  `LOW_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `CURRENT_NUMBER_OF_BYTES_USED` bigint NOT NULL,
+  `HIGH_NUMBER_OF_BYTES_USED` bigint NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `metadata_locks`
+--
+
+CREATE TABLE `metadata_locks` (
+  `OBJECT_TYPE` varchar(64) NOT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `COLUMN_NAME` varchar(64) DEFAULT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `LOCK_TYPE` varchar(32) NOT NULL,
+  `LOCK_DURATION` varchar(32) NOT NULL,
+  `LOCK_STATUS` varchar(32) NOT NULL,
+  `SOURCE` varchar(64) DEFAULT NULL,
+  `OWNER_THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `OWNER_EVENT_ID` bigint UNSIGNED DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mutex_instances`
+--
+
+CREATE TABLE `mutex_instances` (
+  `NAME` varchar(128) NOT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `LOCKED_BY_THREAD_ID` bigint UNSIGNED DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `objects_summary_global_by_type`
+--
+
+CREATE TABLE `objects_summary_global_by_type` (
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `performance_timers`
+--
+
+CREATE TABLE `performance_timers` (
+  `TIMER_NAME` enum('CYCLE','NANOSECOND','MICROSECOND','MILLISECOND','THREAD_CPU') NOT NULL,
+  `TIMER_FREQUENCY` bigint DEFAULT NULL,
+  `TIMER_RESOLUTION` bigint DEFAULT NULL,
+  `TIMER_OVERHEAD` bigint DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `persisted_variables`
+--
+
+CREATE TABLE `persisted_variables` (
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `prepared_statements_instances`
+--
+
+CREATE TABLE `prepared_statements_instances` (
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `STATEMENT_ID` bigint UNSIGNED NOT NULL,
+  `STATEMENT_NAME` varchar(64) DEFAULT NULL,
+  `SQL_TEXT` longtext NOT NULL,
+  `OWNER_THREAD_ID` bigint UNSIGNED NOT NULL,
+  `OWNER_EVENT_ID` bigint UNSIGNED NOT NULL,
+  `OWNER_OBJECT_TYPE` enum('EVENT','FUNCTION','PROCEDURE','TABLE','TRIGGER') DEFAULT NULL,
+  `OWNER_OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OWNER_OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `EXECUTION_ENGINE` enum('PRIMARY','SECONDARY') DEFAULT NULL,
+  `TIMER_PREPARE` bigint UNSIGNED NOT NULL,
+  `COUNT_REPREPARE` bigint UNSIGNED NOT NULL,
+  `COUNT_EXECUTE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_EXECUTE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_EXECUTE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_EXECUTE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_EXECUTE` bigint UNSIGNED NOT NULL,
+  `SUM_LOCK_TIME` bigint UNSIGNED NOT NULL,
+  `SUM_ERRORS` bigint UNSIGNED NOT NULL,
+  `SUM_WARNINGS` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_AFFECTED` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_SENT` bigint UNSIGNED NOT NULL,
+  `SUM_ROWS_EXAMINED` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_DISK_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_CREATED_TMP_TABLES` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_FULL_RANGE_JOIN` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_RANGE_CHECK` bigint UNSIGNED NOT NULL,
+  `SUM_SELECT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_MERGE_PASSES` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_RANGE` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_ROWS` bigint UNSIGNED NOT NULL,
+  `SUM_SORT_SCAN` bigint UNSIGNED NOT NULL,
+  `SUM_NO_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_NO_GOOD_INDEX_USED` bigint UNSIGNED NOT NULL,
+  `SUM_CPU_TIME` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `COUNT_SECONDARY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `processlist`
+--
+
+CREATE TABLE `processlist` (
+  `ID` bigint UNSIGNED NOT NULL,
+  `USER` varchar(32) DEFAULT NULL,
+  `HOST` varchar(261) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `DB` varchar(64) DEFAULT NULL,
+  `COMMAND` varchar(16) DEFAULT NULL,
+  `TIME` bigint DEFAULT NULL,
+  `STATE` varchar(64) DEFAULT NULL,
+  `INFO` longtext,
+  `EXECUTION_ENGINE` enum('PRIMARY','SECONDARY') DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_applier_configuration`
+--
+
+CREATE TABLE `replication_applier_configuration` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `DESIRED_DELAY` int NOT NULL,
+  `PRIVILEGE_CHECKS_USER` text CHARACTER SET utf8mb3 COLLATE utf8mb3_bin COMMENT 'User name for the security context of the applier.',
+  `REQUIRE_ROW_FORMAT` enum('YES','NO') NOT NULL COMMENT 'Indicates whether the channel shall only accept row based events.',
+  `REQUIRE_TABLE_PRIMARY_KEY_CHECK` enum('STREAM','ON','OFF','GENERATE') NOT NULL COMMENT 'Indicates what is the channel policy regarding tables without primary keys on create and alter table queries',
+  `ASSIGN_GTIDS_TO_ANONYMOUS_TRANSACTIONS_TYPE` enum('OFF','LOCAL','UUID') NOT NULL COMMENT 'Indicates whether the channel will generate a new GTID for anonymous transactions. OFF means that anonymous transactions will remain anonymous. LOCAL means that anonymous transactions will be assigned a newly generated GTID based on server_uuid. UUID indicates that anonymous transactions will be assigned a newly generated GTID based on Assign_gtids_to_anonymous_transactions_value',
+  `ASSIGN_GTIDS_TO_ANONYMOUS_TRANSACTIONS_VALUE` text CHARACTER SET utf8mb3 COLLATE utf8mb3_bin COMMENT 'Indicates the UUID used while generating GTIDs for anonymous transactions'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_applier_filters`
+--
+
+CREATE TABLE `replication_applier_filters` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `FILTER_NAME` char(64) NOT NULL,
+  `FILTER_RULE` longtext NOT NULL,
+  `CONFIGURED_BY` enum('STARTUP_OPTIONS','CHANGE_REPLICATION_FILTER','STARTUP_OPTIONS_FOR_CHANNEL','CHANGE_REPLICATION_FILTER_FOR_CHANNEL') NOT NULL,
+  `ACTIVE_SINCE` timestamp(6) NOT NULL,
+  `COUNTER` bigint UNSIGNED NOT NULL DEFAULT '0'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_applier_global_filters`
+--
+
+CREATE TABLE `replication_applier_global_filters` (
+  `FILTER_NAME` char(64) NOT NULL,
+  `FILTER_RULE` longtext NOT NULL,
+  `CONFIGURED_BY` enum('STARTUP_OPTIONS','CHANGE_REPLICATION_FILTER') NOT NULL,
+  `ACTIVE_SINCE` timestamp(6) NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_applier_status`
+--
+
+CREATE TABLE `replication_applier_status` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `SERVICE_STATE` enum('ON','OFF') NOT NULL,
+  `REMAINING_DELAY` int UNSIGNED DEFAULT NULL,
+  `COUNT_TRANSACTIONS_RETRIES` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_applier_status_by_coordinator`
+--
+
+CREATE TABLE `replication_applier_status_by_coordinator` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `SERVICE_STATE` enum('ON','OFF') NOT NULL,
+  `LAST_ERROR_NUMBER` int NOT NULL,
+  `LAST_ERROR_MESSAGE` varchar(1024) NOT NULL,
+  `LAST_ERROR_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_PROCESSED_TRANSACTION` char(90) DEFAULT NULL,
+  `LAST_PROCESSED_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_PROCESSED_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_PROCESSED_TRANSACTION_START_BUFFER_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_PROCESSED_TRANSACTION_END_BUFFER_TIMESTAMP` timestamp(6) NOT NULL,
+  `PROCESSING_TRANSACTION` char(90) DEFAULT NULL,
+  `PROCESSING_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `PROCESSING_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `PROCESSING_TRANSACTION_START_BUFFER_TIMESTAMP` timestamp(6) NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_applier_status_by_worker`
+--
+
+CREATE TABLE `replication_applier_status_by_worker` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `WORKER_ID` bigint UNSIGNED NOT NULL,
+  `THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `SERVICE_STATE` enum('ON','OFF') NOT NULL,
+  `LAST_ERROR_NUMBER` int NOT NULL,
+  `LAST_ERROR_MESSAGE` varchar(1024) NOT NULL,
+  `LAST_ERROR_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_APPLIED_TRANSACTION` char(90) DEFAULT NULL,
+  `LAST_APPLIED_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_APPLIED_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_APPLIED_TRANSACTION_START_APPLY_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_APPLIED_TRANSACTION_END_APPLY_TIMESTAMP` timestamp(6) NOT NULL,
+  `APPLYING_TRANSACTION` char(90) DEFAULT NULL,
+  `APPLYING_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `APPLYING_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `APPLYING_TRANSACTION_START_APPLY_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_APPLIED_TRANSACTION_RETRIES_COUNT` bigint UNSIGNED NOT NULL,
+  `LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER` int NOT NULL,
+  `LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE` varchar(1024) DEFAULT NULL,
+  `LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP` timestamp(6) NOT NULL,
+  `APPLYING_TRANSACTION_RETRIES_COUNT` bigint UNSIGNED NOT NULL,
+  `APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER` int NOT NULL,
+  `APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE` varchar(1024) DEFAULT NULL,
+  `APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP` timestamp(6) NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_asynchronous_connection_failover`
+--
+
+CREATE TABLE `replication_asynchronous_connection_failover` (
+  `CHANNEL_NAME` char(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'The replication channel name that connects source and replica.',
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL COMMENT 'The source hostname that the replica will attempt to switch over the replication connection to in case of a failure.',
+  `PORT` int NOT NULL COMMENT 'The source port that the replica will attempt to switch over the replication connection to in case of a failure.',
+  `NETWORK_NAMESPACE` char(64) DEFAULT NULL COMMENT 'The source network namespace that the replica will attempt to switch over the replication connection to in case of a failure. If its value is empty, connections use the default (global) namespace.',
+  `WEIGHT` int UNSIGNED NOT NULL COMMENT 'The order in which the replica shall try to switch the connection over to when there are failures. Weight can be set to a number between 1 and 100, where 100 is the highest weight and 1 the lowest.',
+  `MANAGED_NAME` char(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT 'The name of the group which this server belongs to.'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_asynchronous_connection_failover_managed`
+--
+
+CREATE TABLE `replication_asynchronous_connection_failover_managed` (
+  `CHANNEL_NAME` char(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'The replication channel name that connects source and replica.',
+  `MANAGED_NAME` char(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT 'The name of the source which needs to be managed.',
+  `MANAGED_TYPE` char(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT 'Determines the managed type.',
+  `CONFIGURATION` json DEFAULT NULL COMMENT 'The data to help manage group. For Managed_type = GroupReplication, Configuration value should contain {"Primary_weight": 80, "Secondary_weight": 60}, so that it assigns weight=80 to PRIMARY of the group, and weight=60 for rest of the members in mysql.replication_asynchronous_connection_failover table.'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_connection_configuration`
+--
+
+CREATE TABLE `replication_connection_configuration` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+  `PORT` int NOT NULL,
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `NETWORK_INTERFACE` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `AUTO_POSITION` enum('1','0') NOT NULL,
+  `SSL_ALLOWED` enum('YES','NO','IGNORED') NOT NULL,
+  `SSL_CA_FILE` varchar(512) NOT NULL,
+  `SSL_CA_PATH` varchar(512) NOT NULL,
+  `SSL_CERTIFICATE` varchar(512) NOT NULL,
+  `SSL_CIPHER` varchar(512) NOT NULL,
+  `SSL_KEY` varchar(512) NOT NULL,
+  `SSL_VERIFY_SERVER_CERTIFICATE` enum('YES','NO') NOT NULL,
+  `SSL_CRL_FILE` varchar(255) NOT NULL,
+  `SSL_CRL_PATH` varchar(255) NOT NULL,
+  `CONNECTION_RETRY_INTERVAL` int NOT NULL,
+  `CONNECTION_RETRY_COUNT` bigint UNSIGNED NOT NULL,
+  `HEARTBEAT_INTERVAL` double(10,3) NOT NULL COMMENT 'Number of seconds after which a heartbeat will be sent .',
+  `TLS_VERSION` varchar(255) NOT NULL,
+  `PUBLIC_KEY_PATH` varchar(512) NOT NULL,
+  `GET_PUBLIC_KEY` enum('YES','NO') NOT NULL,
+  `NETWORK_NAMESPACE` varchar(64) NOT NULL,
+  `COMPRESSION_ALGORITHM` char(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'Compression algorithm used for data transfer between master and slave.',
+  `ZSTD_COMPRESSION_LEVEL` int NOT NULL COMMENT 'Compression level associated with zstd compression algorithm.',
+  `TLS_CIPHERSUITES` text CHARACTER SET utf8mb3 COLLATE utf8mb3_bin,
+  `SOURCE_CONNECTION_AUTO_FAILOVER` enum('1','0') NOT NULL,
+  `GTID_ONLY` enum('1','0') NOT NULL COMMENT 'Indicates if this channel only uses GTIDs and does not persist positions.'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_connection_status`
+--
+
+CREATE TABLE `replication_connection_status` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `GROUP_NAME` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `SOURCE_UUID` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `SERVICE_STATE` enum('ON','OFF','CONNECTING') NOT NULL,
+  `COUNT_RECEIVED_HEARTBEATS` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `LAST_HEARTBEAT_TIMESTAMP` timestamp(6) NOT NULL COMMENT 'Shows when the most recent heartbeat signal was received.',
+  `RECEIVED_TRANSACTION_SET` longtext NOT NULL,
+  `LAST_ERROR_NUMBER` int NOT NULL,
+  `LAST_ERROR_MESSAGE` varchar(1024) NOT NULL,
+  `LAST_ERROR_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_QUEUED_TRANSACTION` char(90) DEFAULT NULL,
+  `LAST_QUEUED_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_QUEUED_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_QUEUED_TRANSACTION_START_QUEUE_TIMESTAMP` timestamp(6) NOT NULL,
+  `LAST_QUEUED_TRANSACTION_END_QUEUE_TIMESTAMP` timestamp(6) NOT NULL,
+  `QUEUEING_TRANSACTION` char(90) DEFAULT NULL,
+  `QUEUEING_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `QUEUEING_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP` timestamp(6) NOT NULL,
+  `QUEUEING_TRANSACTION_START_QUEUE_TIMESTAMP` timestamp(6) NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_group_members`
+--
+
+CREATE TABLE `replication_group_members` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `MEMBER_ID` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `MEMBER_HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+  `MEMBER_PORT` int DEFAULT NULL,
+  `MEMBER_STATE` char(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `MEMBER_ROLE` char(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `MEMBER_VERSION` char(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `MEMBER_COMMUNICATION_STACK` char(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `replication_group_member_stats`
+--
+
+CREATE TABLE `replication_group_member_stats` (
+  `CHANNEL_NAME` char(64) NOT NULL,
+  `VIEW_ID` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `MEMBER_ID` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `COUNT_TRANSACTIONS_IN_QUEUE` bigint UNSIGNED NOT NULL,
+  `COUNT_TRANSACTIONS_CHECKED` bigint UNSIGNED NOT NULL,
+  `COUNT_CONFLICTS_DETECTED` bigint UNSIGNED NOT NULL,
+  `COUNT_TRANSACTIONS_ROWS_VALIDATING` bigint UNSIGNED NOT NULL,
+  `TRANSACTIONS_COMMITTED_ALL_MEMBERS` longtext NOT NULL,
+  `LAST_CONFLICT_FREE_TRANSACTION` text NOT NULL,
+  `COUNT_TRANSACTIONS_REMOTE_IN_APPLIER_QUEUE` bigint UNSIGNED NOT NULL,
+  `COUNT_TRANSACTIONS_REMOTE_APPLIED` bigint UNSIGNED NOT NULL,
+  `COUNT_TRANSACTIONS_LOCAL_PROPOSED` bigint UNSIGNED NOT NULL,
+  `COUNT_TRANSACTIONS_LOCAL_ROLLBACK` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `rwlock_instances`
+--
+
+CREATE TABLE `rwlock_instances` (
+  `NAME` varchar(128) NOT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `WRITE_LOCKED_BY_THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `READ_LOCKED_BY_COUNT` int UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `session_account_connect_attrs`
+--
+
+CREATE TABLE `session_account_connect_attrs` (
+  `PROCESSLIST_ID` bigint UNSIGNED NOT NULL,
+  `ATTR_NAME` varchar(32) COLLATE utf8mb4_bin NOT NULL,
+  `ATTR_VALUE` varchar(1024) COLLATE utf8mb4_bin DEFAULT NULL,
+  `ORDINAL_POSITION` int DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `session_connect_attrs`
+--
+
+CREATE TABLE `session_connect_attrs` (
+  `PROCESSLIST_ID` bigint UNSIGNED NOT NULL,
+  `ATTR_NAME` varchar(32) COLLATE utf8mb4_bin NOT NULL,
+  `ATTR_VALUE` varchar(1024) COLLATE utf8mb4_bin DEFAULT NULL,
+  `ORDINAL_POSITION` int DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `session_status`
+--
+
+CREATE TABLE `session_status` (
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `session_status`
+--
+
+INSERT INTO `session_status` (`VARIABLE_NAME`, `VARIABLE_VALUE`) VALUES
+('Aborted_clients', '0'),
+('Aborted_connects', '0'),
+('Acl_cache_items_count', '0'),
+('Binlog_cache_disk_use', '0'),
+('Binlog_cache_use', '0'),
+('Binlog_stmt_cache_disk_use', '0'),
+('Binlog_stmt_cache_use', '0'),
+('Bytes_received', '91421'),
+('Bytes_sent', '648624'),
+('Caching_sha2_password_rsa_public_key', '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtiHexnOkFQWwLctF3sIQ\n2d8WWvPwd60VT5gfLcp16MdC/EvHXwqZADIReI9OEll1OUnvAHYgid0YzIZBi93T\n0UDx6CXoZrEHz/Ri8W3T4vpdLX1lVgOAhYWlW3nmRbHGwjdM7mtPlx7jmYe/1Bw2\nsl0Hnj7RzvNPhHwDAVMpWVJApiFOl6XtCCoDq0Zp0ze+1+62+K6752Kt7ufPJKWL\nTZU3Y8oFbCFFnchmdU1cz3A7clQWXAejL0BIuRGddNNEPnQrNjFjzJ9GgeVK4l3/\n2ZvCshWpYZ9RvzOoRJh/rbrYsm068fKMDiV5GSygDq2XOO3a0bYKqHxqGwdQzvri\n3wIDAQAB\n-----END PUBLIC KEY-----\n'),
+('Com_stmt_reprepare', '0'),
+('Compression', 'OFF'),
+('Compression_algorithm', ''),
+('Compression_level', '0'),
+('Connection_errors_accept', '0'),
+('Connection_errors_internal', '0'),
+('Connection_errors_max_connections', '0'),
+('Connection_errors_peer_address', '0'),
+('Connection_errors_select', '0'),
+('Connection_errors_tcpwrap', '0'),
+('Connections', '27123'),
+('Created_tmp_disk_tables', '0'),
+('Created_tmp_files', '8'),
+('Created_tmp_tables', '87'),
+('Current_tls_ca', 'D:/OSPanel/data/ssl/cacert.pem'),
+('Current_tls_capath', ''),
+('Current_tls_cert', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.crt'),
+('Current_tls_cipher', ''),
+('Current_tls_ciphersuites', ''),
+('Current_tls_crl', ''),
+('Current_tls_crlpath', ''),
+('Current_tls_key', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.key'),
+('Current_tls_version', 'TLSv1.2,TLSv1.3'),
+('Delayed_errors', '0'),
+('Delayed_insert_threads', '0'),
+('Delayed_writes', '0'),
+('Deprecated_use_fk_on_non_standard_key_count', '0'),
+('Deprecated_use_fk_on_non_standard_key_last_timestamp', '0'),
+('Deprecated_use_i_s_processlist_count', '0'),
+('Deprecated_use_i_s_processlist_last_timestamp', '0'),
+('Error_log_buffered_bytes', '22688'),
+('Error_log_buffered_events', '194'),
+('Error_log_expired_events', '0'),
+('Error_log_latest_write', '1765284105863898'),
+('Flush_commands', '3'),
+('Global_connection_memory', '0'),
+('Handler_commit', '263'),
+('Handler_delete', '0'),
+('Handler_discover', '0'),
+('Handler_external_lock', '3685'),
+('Handler_mrr_init', '0'),
+('Handler_prepare', '0'),
+('Handler_read_first', '352'),
+('Handler_read_key', '1870'),
+('Handler_read_last', '0'),
+('Handler_read_next', '1568'),
+('Handler_read_prev', '0'),
+('Handler_read_rnd', '1192'),
+('Handler_read_rnd_next', '2629'),
+('Handler_rollback', '0'),
+('Handler_savepoint', '0'),
+('Handler_savepoint_rollback', '0'),
+('Handler_update', '0'),
+('Handler_write', '1192'),
+('Innodb_buffer_pool_dump_status', 'Dumping of buffer pool not started'),
+('Innodb_buffer_pool_load_status', 'Buffer pool(s) load completed at 251122 11:26:08'),
+('Innodb_buffer_pool_resize_status', ''),
+('Innodb_buffer_pool_resize_status_code', '0'),
+('Innodb_buffer_pool_resize_status_progress', '0'),
+('Innodb_buffer_pool_pages_data', '9537'),
+('Innodb_buffer_pool_bytes_data', '156254208'),
+('Innodb_buffer_pool_pages_dirty', '0'),
+('Innodb_buffer_pool_bytes_dirty', '0'),
+('Innodb_buffer_pool_pages_flushed', '372306'),
+('Innodb_buffer_pool_pages_free', '23227'),
+('Innodb_buffer_pool_pages_misc', '4'),
+('Innodb_buffer_pool_pages_total', '32768'),
+('Innodb_buffer_pool_read_ahead_rnd', '0'),
+('Innodb_buffer_pool_read_ahead', '0'),
+('Innodb_buffer_pool_read_ahead_evicted', '0'),
+('Innodb_buffer_pool_read_requests', '45633463'),
+('Innodb_buffer_pool_reads', '1369'),
+('Innodb_buffer_pool_wait_free', '0'),
+('Innodb_buffer_pool_write_requests', '1115136'),
+('Innodb_data_fsyncs', '273874'),
+('Innodb_data_pending_fsyncs', '0'),
+('Innodb_data_pending_reads', '0'),
+('Innodb_data_pending_writes', '0'),
+('Innodb_data_read', '35113472'),
+('Innodb_data_reads', '2218'),
+('Innodb_data_writes', '628186'),
+('Innodb_data_written', '2442084864'),
+('Innodb_dblwr_pages_written', '372158'),
+('Innodb_dblwr_writes', '25377'),
+('Innodb_redo_log_read_only', 'OFF'),
+('Innodb_redo_log_uuid', '1648430680'),
+('Innodb_redo_log_checkpoint_lsn', '470557852'),
+('Innodb_redo_log_current_lsn', '470557852'),
+('Innodb_redo_log_flushed_to_disk_lsn', '470557852'),
+('Innodb_redo_log_logical_size', '512'),
+('Innodb_redo_log_physical_size', '55705600'),
+('Innodb_redo_log_capacity_resized', '104857600'),
+('Innodb_redo_log_resize_status', 'OK'),
+('Innodb_log_waits', '0'),
+('Innodb_log_write_requests', '637820'),
+('Innodb_log_writes', '215250'),
+('Innodb_os_log_fsyncs', '186678'),
+('Innodb_os_log_pending_fsyncs', '0'),
+('Innodb_os_log_pending_writes', '0'),
+('Innodb_os_log_written', '504573952'),
+('Innodb_page_size', '16384'),
+('Innodb_pages_created', '8244'),
+('Innodb_pages_read', '1368'),
+('Innodb_pages_written', '372312'),
+('Innodb_redo_log_enabled', 'ON'),
+('Innodb_row_lock_current_waits', '0'),
+('Innodb_row_lock_time', '473'),
+('Innodb_row_lock_time_avg', '2'),
+('Innodb_row_lock_time_max', '118'),
+('Innodb_row_lock_waits', '236'),
+('Innodb_rows_deleted', '8156'),
+('Innodb_rows_inserted', '22587'),
+('Innodb_rows_read', '16323688'),
+('Innodb_rows_updated', '51504'),
+('Innodb_system_rows_deleted', '665'),
+('Innodb_system_rows_inserted', '1158'),
+('Innodb_system_rows_read', '1013334'),
+('Innodb_system_rows_updated', '735'),
+('Innodb_sampled_pages_read', '0'),
+('Innodb_sampled_pages_skipped', '0'),
+('Innodb_num_open_files', '34'),
+('Innodb_truncated_status_writes', '0'),
+('Innodb_undo_tablespaces_total', '2'),
+('Innodb_undo_tablespaces_implicit', '2'),
+('Innodb_undo_tablespaces_explicit', '0'),
+('Innodb_undo_tablespaces_active', '2'),
+('Key_blocks_not_flushed', '0'),
+('Key_blocks_unused', '26792'),
+('Key_blocks_used', '0'),
+('Key_read_requests', '0'),
+('Key_reads', '0'),
+('Key_write_requests', '0'),
+('Key_writes', '0'),
+('Last_query_cost', '21.215870'),
+('Last_query_partial_plans', '45'),
+('Locked_connects', '0'),
+('Max_execution_time_exceeded', '0'),
+('Max_execution_time_set', '0'),
+('Max_execution_time_set_failed', '0'),
+('Max_used_connections', '9'),
+('Max_used_connections_time', '2025-11-30 17:21:17'),
+('Mysqlx_aborted_clients', '0'),
+('Mysqlx_address', '127.0.1.28'),
+('Mysqlx_bytes_received', '0'),
+('Mysqlx_bytes_received_compressed_payload', '0'),
+('Mysqlx_bytes_received_uncompressed_frame', '0'),
+('Mysqlx_bytes_sent', '0'),
+('Mysqlx_bytes_sent_compressed_payload', '0'),
+('Mysqlx_bytes_sent_uncompressed_frame', '0'),
+('Mysqlx_compression_algorithm', ''),
+('Mysqlx_compression_level', ''),
+('Mysqlx_connection_accept_errors', '0'),
+('Mysqlx_connection_errors', '0'),
+('Mysqlx_connections_accepted', '0'),
+('Mysqlx_connections_closed', '0'),
+('Mysqlx_connections_rejected', '0'),
+('Mysqlx_crud_create_view', '0'),
+('Mysqlx_crud_delete', '0'),
+('Mysqlx_crud_drop_view', '0'),
+('Mysqlx_crud_find', '0'),
+('Mysqlx_crud_insert', '0'),
+('Mysqlx_crud_modify_view', '0'),
+('Mysqlx_crud_update', '0'),
+('Mysqlx_cursor_close', '0'),
+('Mysqlx_cursor_fetch', '0'),
+('Mysqlx_cursor_open', '0'),
+('Mysqlx_errors_sent', '0'),
+('Mysqlx_errors_unknown_message_type', '0'),
+('Mysqlx_expect_close', '0'),
+('Mysqlx_expect_open', '0'),
+('Mysqlx_init_error', '0'),
+('Mysqlx_messages_sent', '0'),
+('Mysqlx_notice_global_sent', '0'),
+('Mysqlx_notice_other_sent', '0'),
+('Mysqlx_notice_warning_sent', '0'),
+('Mysqlx_notified_by_group_replication', '0'),
+('Mysqlx_port', '33060'),
+('Mysqlx_prep_deallocate', '0'),
+('Mysqlx_prep_execute', '0'),
+('Mysqlx_prep_prepare', '0'),
+('Mysqlx_rows_sent', '0'),
+('Mysqlx_sessions', '0'),
+('Mysqlx_sessions_accepted', '0'),
+('Mysqlx_sessions_closed', '0'),
+('Mysqlx_sessions_fatal_error', '0'),
+('Mysqlx_sessions_killed', '0'),
+('Mysqlx_sessions_rejected', '0'),
+('Mysqlx_socket', 'UNDEFINED'),
+('Mysqlx_ssl_accepts', '0'),
+('Mysqlx_ssl_active', ''),
+('Mysqlx_ssl_cipher', ''),
+('Mysqlx_ssl_cipher_list', ''),
+('Mysqlx_ssl_ctx_verify_depth', '18446744073709551615'),
+('Mysqlx_ssl_ctx_verify_mode', '5'),
+('Mysqlx_ssl_finished_accepts', '0'),
+('Mysqlx_ssl_server_not_after', 'Nov 17 20:53:51 2035 GMT'),
+('Mysqlx_ssl_server_not_before', 'Nov 19 20:53:51 2025 GMT'),
+('Mysqlx_ssl_verify_depth', ''),
+('Mysqlx_ssl_verify_mode', ''),
+('Mysqlx_ssl_version', ''),
+('Mysqlx_stmt_create_collection', '0'),
+('Mysqlx_stmt_create_collection_index', '0'),
+('Mysqlx_stmt_disable_notices', '0'),
+('Mysqlx_stmt_drop_collection', '0'),
+('Mysqlx_stmt_drop_collection_index', '0'),
+('Mysqlx_stmt_enable_notices', '0'),
+('Mysqlx_stmt_ensure_collection', '0'),
+('Mysqlx_stmt_execute_mysqlx', '0'),
+('Mysqlx_stmt_execute_sql', '0'),
+('Mysqlx_stmt_execute_xplugin', '0'),
+('Mysqlx_stmt_get_collection_options', '0'),
+('Mysqlx_stmt_kill_client', '0'),
+('Mysqlx_stmt_list_clients', '0'),
+('Mysqlx_stmt_list_notices', '0'),
+('Mysqlx_stmt_list_objects', '0'),
+('Mysqlx_stmt_modify_collection_options', '0'),
+('Mysqlx_stmt_ping', '0'),
+('Mysqlx_worker_threads', '2'),
+('Mysqlx_worker_threads_active', '0'),
+('Not_flushed_delayed_rows', '0'),
+('Ongoing_anonymous_transaction_count', '0'),
+('Open_files', '6'),
+('Open_streams', '0'),
+('Open_table_definitions', '312'),
+('Open_tables', '1485'),
+('Opened_files', '6'),
+('Opened_table_definitions', '0'),
+('Opened_tables', '80'),
+('Performance_schema_accounts_lost', '0'),
+('Performance_schema_cond_classes_lost', '0'),
+('Performance_schema_cond_instances_lost', '0'),
+('Performance_schema_digest_lost', '0'),
+('Performance_schema_file_classes_lost', '0'),
+('Performance_schema_file_handles_lost', '0'),
+('Performance_schema_file_instances_lost', '0'),
+('Performance_schema_hosts_lost', '0'),
+('Performance_schema_index_stat_lost', '0'),
+('Performance_schema_locker_lost', '0'),
+('Performance_schema_memory_classes_lost', '0'),
+('Performance_schema_metadata_lock_lost', '0'),
+('Performance_schema_meter_lost', '0'),
+('Performance_schema_metric_lost', '0'),
+('Performance_schema_mutex_classes_lost', '0'),
+('Performance_schema_mutex_instances_lost', '0'),
+('Performance_schema_nested_statement_lost', '0'),
+('Performance_schema_prepared_statements_lost', '0'),
+('Performance_schema_program_lost', '0'),
+('Performance_schema_rwlock_classes_lost', '0'),
+('Performance_schema_rwlock_instances_lost', '0'),
+('Performance_schema_session_connect_attrs_longest_seen', '0'),
+('Performance_schema_session_connect_attrs_lost', '0'),
+('Performance_schema_socket_classes_lost', '0'),
+('Performance_schema_socket_instances_lost', '0'),
+('Performance_schema_stage_classes_lost', '0'),
+('Performance_schema_statement_classes_lost', '0'),
+('Performance_schema_table_handles_lost', '0'),
+('Performance_schema_table_instances_lost', '0'),
+('Performance_schema_table_lock_stat_lost', '0'),
+('Performance_schema_thread_classes_lost', '0'),
+('Performance_schema_thread_instances_lost', '0'),
+('Performance_schema_users_lost', '0'),
+('Prepared_stmt_count', '0'),
+('Queries', '1992038'),
+('Questions', '619'),
+('Replica_open_temp_tables', '0'),
+('Resource_group_supported', 'ON'),
+('Rsa_public_key', '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtiHexnOkFQWwLctF3sIQ\n2d8WWvPwd60VT5gfLcp16MdC/EvHXwqZADIReI9OEll1OUnvAHYgid0YzIZBi93T\n0UDx6CXoZrEHz/Ri8W3T4vpdLX1lVgOAhYWlW3nmRbHGwjdM7mtPlx7jmYe/1Bw2\nsl0Hnj7RzvNPhHwDAVMpWVJApiFOl6XtCCoDq0Zp0ze+1+62+K6752Kt7ufPJKWL\nTZU3Y8oFbCFFnchmdU1cz3A7clQWXAejL0BIuRGddNNEPnQrNjFjzJ9GgeVK4l3/\n2ZvCshWpYZ9RvzOoRJh/rbrYsm068fKMDiV5GSygDq2XOO3a0bYKqHxqGwdQzvri\n3wIDAQAB\n-----END PUBLIC KEY-----\n'),
+('Secondary_engine_execution_count', '0'),
+('Select_full_join', '89'),
+('Select_full_range_join', '0'),
+('Select_range', '0'),
+('Select_range_check', '0'),
+('Select_scan', '350'),
+('Slave_open_temp_tables', '0'),
+('Slow_launch_threads', '0'),
+('Slow_queries', '0'),
+('Sort_merge_passes', '0'),
+('Sort_range', '0'),
+('Sort_rows', '1353'),
+('Sort_scan', '90'),
+('Ssl_accept_renegotiates', '0'),
+('Ssl_accepts', '0'),
+('Ssl_callback_cache_hits', '0'),
+('Ssl_cipher', ''),
+('Ssl_cipher_list', ''),
+('Ssl_client_connects', '0'),
+('Ssl_connect_renegotiates', '0'),
+('Ssl_ctx_verify_depth', '4294967295'),
+('Ssl_ctx_verify_mode', '5'),
+('Ssl_default_timeout', '0'),
+('Ssl_finished_accepts', '0'),
+('Ssl_finished_connects', '0'),
+('Ssl_server_not_after', 'Nov 17 20:53:51 2035 GMT'),
+('Ssl_server_not_before', 'Nov 19 20:53:51 2025 GMT'),
+('Ssl_session_cache_hits', '0'),
+('Ssl_session_cache_misses', '0'),
+('Ssl_session_cache_mode', 'SERVER'),
+('Ssl_session_cache_overflows', '0'),
+('Ssl_session_cache_size', '128'),
+('Ssl_session_cache_timeout', '300'),
+('Ssl_session_cache_timeouts', '0'),
+('Ssl_sessions_reused', '0'),
+('Ssl_used_session_cache_entries', '0'),
+('Ssl_verify_depth', '0'),
+('Ssl_verify_mode', '0'),
+('Ssl_version', ''),
+('Table_locks_immediate', '283'),
+('Table_locks_waited', '0'),
+('Table_open_cache_hits', '2050'),
+('Table_open_cache_misses', '80'),
+('Table_open_cache_overflows', '0'),
+('Tc_log_max_pages_used', '0'),
+('Tc_log_page_size', '0'),
+('Tc_log_page_waits', '0'),
+('Telemetry_metrics_supported', 'ON'),
+('Telemetry_traces_supported', 'ON'),
+('Threads_cached', '2'),
+('Threads_connected', '2'),
+('Threads_created', '794'),
+('Threads_running', '2'),
+('Tls_library_version', 'OpenSSL 3.0.16 11 Feb 2025'),
+('Tls_sni_server_name', ''),
+('Uptime', '1484143'),
+('Uptime_since_flush_status', '1484143');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `session_variables`
+--
+
+CREATE TABLE `session_variables` (
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `session_variables`
+--
+
+INSERT INTO `session_variables` (`VARIABLE_NAME`, `VARIABLE_VALUE`) VALUES
+('activate_all_roles_on_login', 'OFF'),
+('admin_address', ''),
+('admin_port', '33062'),
+('admin_ssl_ca', ''),
+('admin_ssl_capath', ''),
+('admin_ssl_cert', ''),
+('admin_ssl_cipher', ''),
+('admin_ssl_crl', ''),
+('admin_ssl_crlpath', ''),
+('admin_ssl_key', ''),
+('admin_tls_ciphersuites', ''),
+('admin_tls_version', 'TLSv1.2,TLSv1.3'),
+('authentication_policy', 'mysql_native_password,,'),
+('auto_generate_certs', 'ON'),
+('auto_increment_increment', '1'),
+('auto_increment_offset', '1'),
+('autocommit', 'ON'),
+('automatic_sp_privileges', 'ON'),
+('back_log', '128'),
+('basedir', 'D:\\OSPanel\\modules\\MySQL-8.4\\'),
+('big_tables', 'OFF'),
+('bind_address', '127.0.1.28'),
+('binlog_cache_size', '32768'),
+('binlog_checksum', 'CRC32'),
+('binlog_direct_non_transactional_updates', 'OFF'),
+('binlog_encryption', 'OFF'),
+('binlog_error_action', 'ABORT_SERVER'),
+('binlog_expire_logs_auto_purge', 'ON'),
+('binlog_expire_logs_seconds', '2592000'),
+('binlog_format', 'ROW'),
+('binlog_group_commit_sync_delay', '0'),
+('binlog_group_commit_sync_no_delay_count', '0'),
+('binlog_gtid_simple_recovery', 'ON'),
+('binlog_max_flush_queue_time', '0'),
+('binlog_order_commits', 'ON'),
+('binlog_rotate_encryption_master_key_at_startup', 'OFF'),
+('binlog_row_event_max_size', '8192'),
+('binlog_row_image', 'FULL'),
+('binlog_row_metadata', 'MINIMAL'),
+('binlog_row_value_options', ''),
+('binlog_rows_query_log_events', 'OFF'),
+('binlog_stmt_cache_size', '32768'),
+('binlog_transaction_compression', 'OFF'),
+('binlog_transaction_compression_level_zstd', '3'),
+('binlog_transaction_dependency_history_size', '25000'),
+('block_encryption_mode', 'aes-128-ecb'),
+('bulk_insert_buffer_size', '8388608'),
+('caching_sha2_password_auto_generate_rsa_keys', 'ON'),
+('caching_sha2_password_digest_rounds', '5000'),
+('caching_sha2_password_private_key_path', 'private_key.pem'),
+('caching_sha2_password_public_key_path', 'public_key.pem'),
+('character_set_client', 'utf8mb4'),
+('character_set_connection', 'utf8mb4'),
+('character_set_database', 'utf8mb4'),
+('character_set_filesystem', 'binary'),
+('character_set_results', 'utf8mb4'),
+('character_set_server', 'utf8mb4'),
+('character_set_system', 'utf8mb3'),
+('character_sets_dir', 'D:\\OSPanel\\modules\\MySQL-8.4\\share\\charsets\\'),
+('check_proxy_users', 'OFF'),
+('collation_connection', 'utf8mb4_unicode_ci'),
+('collation_database', 'utf8mb4_0900_ai_ci'),
+('collation_server', 'utf8mb4_0900_ai_ci'),
+('completion_type', 'NO_CHAIN'),
+('concurrent_insert', 'AUTO'),
+('connect_timeout', '10'),
+('connection_memory_chunk_size', '8192'),
+('connection_memory_limit', '18446744073709551615'),
+('core_file', 'OFF'),
+('create_admin_listener_thread', 'OFF'),
+('cte_max_recursion_depth', '1000'),
+('datadir', 'D:\\OSPanel\\data\\MySQL-8.4\\default\\'),
+('default_collation_for_utf8mb4', 'utf8mb4_0900_ai_ci'),
+('default_password_lifetime', '0'),
+('default_storage_engine', 'InnoDB'),
+('default_table_encryption', 'OFF'),
+('default_tmp_storage_engine', 'InnoDB'),
+('default_week_format', '0'),
+('delay_key_write', 'ON'),
+('delayed_insert_limit', '100'),
+('delayed_insert_timeout', '300'),
+('delayed_queue_size', '1000'),
+('disabled_storage_engines', ''),
+('disconnect_on_expired_password', 'ON'),
+('div_precision_increment', '4'),
+('end_markers_in_json', 'OFF'),
+('enforce_gtid_consistency', 'OFF'),
+('eq_range_index_dive_limit', '200'),
+('error_count', '0'),
+('event_scheduler', 'ON'),
+('explain_format', 'TRADITIONAL'),
+('explain_json_format_version', '1'),
+('explicit_defaults_for_timestamp', 'ON'),
+('external_user', ''),
+('flush', 'OFF'),
+('flush_time', '0'),
+('foreign_key_checks', 'ON'),
+('ft_boolean_syntax', '+ -><()~*:\"\"&|'),
+('ft_max_word_len', '84'),
+('ft_min_word_len', '3'),
+('ft_query_expansion_limit', '20'),
+('ft_stopword_file', '(built-in)'),
+('general_log', 'OFF'),
+('general_log_file', 'D:/OSPanel/logs/MySQL-8.4/query_log.log'),
+('generated_random_password_length', '20'),
+('global_connection_memory_limit', '18446744073709551615'),
+('global_connection_memory_tracking', 'OFF'),
+('group_concat_max_len', '1024'),
+('group_replication_consistency', 'BEFORE_ON_PRIMARY_FAILOVER'),
+('gtid_executed', ''),
+('gtid_executed_compression_period', '0'),
+('gtid_mode', 'OFF'),
+('gtid_next', 'AUTOMATIC'),
+('gtid_owned', ''),
+('gtid_purged', ''),
+('have_compress', 'YES'),
+('have_dynamic_loading', 'YES'),
+('have_geometry', 'YES'),
+('have_profiling', 'YES'),
+('have_query_cache', 'NO'),
+('have_rtree_keys', 'YES'),
+('have_statement_timeout', 'YES'),
+('have_symlink', 'DISABLED'),
+('histogram_generation_max_mem_size', '20000000'),
+('host_cache_size', '256'),
+('hostname', 'Ekaterina'),
+('identity', '0'),
+('immediate_server_version', '999999'),
+('information_schema_stats_expiry', '86400'),
+('init_connect', ''),
+('init_file', ''),
+('init_replica', ''),
+('init_slave', ''),
+('innodb_adaptive_flushing', 'ON'),
+('innodb_adaptive_flushing_lwm', '10'),
+('innodb_adaptive_hash_index', 'OFF'),
+('innodb_adaptive_hash_index_parts', '8'),
+('innodb_adaptive_max_sleep_delay', '150000'),
+('innodb_api_bk_commit_interval', '5'),
+('innodb_api_disable_rowlock', 'OFF'),
+('innodb_api_enable_binlog', 'OFF'),
+('innodb_api_enable_mdl', 'OFF'),
+('innodb_api_trx_level', '0'),
+('innodb_autoextend_increment', '64'),
+('innodb_autoinc_lock_mode', '2'),
+('innodb_buffer_pool_chunk_size', '134217728'),
+('innodb_buffer_pool_dump_at_shutdown', 'ON'),
+('innodb_buffer_pool_dump_now', 'OFF'),
+('innodb_buffer_pool_dump_pct', '25'),
+('innodb_buffer_pool_filename', 'ib_buffer_pool'),
+('innodb_buffer_pool_in_core_file', 'ON'),
+('innodb_buffer_pool_instances', '1'),
+('innodb_buffer_pool_load_abort', 'OFF'),
+('innodb_buffer_pool_load_at_startup', 'ON'),
+('innodb_buffer_pool_load_now', 'OFF'),
+('innodb_buffer_pool_size', '536870912'),
+('innodb_change_buffer_max_size', '25'),
+('innodb_change_buffering', 'none'),
+('innodb_checksum_algorithm', 'crc32'),
+('innodb_cmp_per_index_enabled', 'OFF'),
+('innodb_commit_concurrency', '0'),
+('innodb_compression_failure_threshold_pct', '5'),
+('innodb_compression_level', '6'),
+('innodb_compression_pad_pct_max', '50'),
+('innodb_concurrency_tickets', '5000'),
+('innodb_data_file_path', 'ibdata1:12M:autoextend'),
+('innodb_data_home_dir', 'D:\\OSPanel\\data\\MySQL-8.4\\default'),
+('innodb_ddl_buffer_size', '1048576'),
+('innodb_ddl_threads', '4'),
+('innodb_deadlock_detect', 'ON'),
+('innodb_dedicated_server', 'OFF'),
+('innodb_default_row_format', 'dynamic'),
+('innodb_directories', ''),
+('innodb_disable_sort_file_cache', 'OFF'),
+('innodb_doublewrite', 'ON'),
+('innodb_doublewrite_batch_size', '0'),
+('innodb_doublewrite_dir', ''),
+('innodb_doublewrite_files', '2'),
+('innodb_doublewrite_pages', '128'),
+('innodb_extend_and_initialize', 'ON'),
+('innodb_fast_shutdown', '1'),
+('innodb_file_per_table', 'ON'),
+('innodb_fill_factor', '100'),
+('innodb_flush_log_at_timeout', '1'),
+('innodb_flush_log_at_trx_commit', '1'),
+('innodb_flush_method', 'unbuffered'),
+('innodb_flush_neighbors', '0'),
+('innodb_flush_sync', 'ON'),
+('innodb_flushing_avg_loops', '30'),
+('innodb_force_load_corrupted', 'OFF'),
+('innodb_force_recovery', '0'),
+('innodb_fsync_threshold', '0'),
+('innodb_ft_aux_table', ''),
+('innodb_ft_cache_size', '8000000'),
+('innodb_ft_enable_diag_print', 'OFF'),
+('innodb_ft_enable_stopword', 'ON'),
+('innodb_ft_max_token_size', '84'),
+('innodb_ft_min_token_size', '3'),
+('innodb_ft_num_word_optimize', '2000'),
+('innodb_ft_result_cache_limit', '2000000000'),
+('innodb_ft_server_stopword_table', ''),
+('innodb_ft_sort_pll_degree', '2'),
+('innodb_ft_total_cache_size', '640000000'),
+('innodb_ft_user_stopword_table', ''),
+('innodb_idle_flush_pct', '100'),
+('innodb_io_capacity', '10000'),
+('innodb_io_capacity_max', '20000'),
+('innodb_lock_wait_timeout', '50'),
+('innodb_log_buffer_size', '67108864'),
+('innodb_log_checksums', 'ON'),
+('innodb_log_compressed_pages', 'ON'),
+('innodb_log_file_size', '50331648'),
+('innodb_log_files_in_group', '2'),
+('innodb_log_group_home_dir', '.\\'),
+('innodb_log_spin_cpu_abs_lwm', '80'),
+('innodb_log_spin_cpu_pct_hwm', '50'),
+('innodb_log_wait_for_flush_spin_hwm', '400'),
+('innodb_log_write_ahead_size', '8192'),
+('innodb_log_writer_threads', 'ON'),
+('innodb_lru_scan_depth', '1024'),
+('innodb_max_dirty_pages_pct', '90.000000'),
+('innodb_max_dirty_pages_pct_lwm', '10.000000'),
+('innodb_max_purge_lag', '0'),
+('innodb_max_purge_lag_delay', '0'),
+('innodb_max_undo_log_size', '1073741824'),
+('innodb_monitor_disable', ''),
+('innodb_monitor_enable', ''),
+('innodb_monitor_reset', ''),
+('innodb_monitor_reset_all', ''),
+('innodb_old_blocks_pct', '37'),
+('innodb_old_blocks_time', '1000'),
+('innodb_online_alter_log_max_size', '134217728'),
+('innodb_open_files', '4096'),
+('innodb_optimize_fulltext_only', 'OFF'),
+('innodb_page_cleaners', '1'),
+('innodb_page_size', '16384'),
+('innodb_parallel_read_threads', '4'),
+('innodb_print_all_deadlocks', 'OFF'),
+('innodb_print_ddl_logs', 'OFF'),
+('innodb_purge_batch_size', '300'),
+('innodb_purge_rseg_truncate_frequency', '128'),
+('innodb_purge_threads', '1'),
+('innodb_random_read_ahead', 'OFF'),
+('innodb_read_ahead_threshold', '56'),
+('innodb_read_io_threads', '4'),
+('innodb_read_only', 'OFF'),
+('innodb_redo_log_archive_dirs', ''),
+('innodb_redo_log_capacity', '104857600'),
+('innodb_redo_log_encrypt', 'OFF'),
+('innodb_replication_delay', '0'),
+('innodb_rollback_on_timeout', 'OFF'),
+('innodb_rollback_segments', '128'),
+('innodb_segment_reserve_factor', '12.500000'),
+('innodb_sort_buffer_size', '1048576'),
+('innodb_spin_wait_delay', '6'),
+('innodb_spin_wait_pause_multiplier', '50'),
+('innodb_stats_auto_recalc', 'ON'),
+('innodb_stats_include_delete_marked', 'OFF'),
+('innodb_stats_method', 'nulls_equal'),
+('innodb_stats_on_metadata', 'OFF'),
+('innodb_stats_persistent', 'ON'),
+('innodb_stats_persistent_sample_pages', '20'),
+('innodb_stats_transient_sample_pages', '8'),
+('innodb_status_output', 'OFF'),
+('innodb_status_output_locks', 'OFF'),
+('innodb_strict_mode', 'ON'),
+('innodb_sync_array_size', '1'),
+('innodb_sync_spin_loops', '30'),
+('innodb_table_locks', 'ON'),
+('innodb_temp_data_file_path', 'ibtmp1:12M:autoextend'),
+('innodb_temp_tablespaces_dir', '.\\#innodb_temp\\'),
+('innodb_thread_concurrency', '0'),
+('innodb_thread_sleep_delay', '10000'),
+('innodb_tmpdir', ''),
+('innodb_undo_directory', '.\\'),
+('innodb_undo_log_encrypt', 'OFF'),
+('innodb_undo_log_truncate', 'ON'),
+('innodb_undo_tablespaces', '2'),
+('innodb_use_fdatasync', 'ON'),
+('innodb_use_native_aio', 'ON'),
+('innodb_validate_tablespace_paths', 'ON'),
+('innodb_version', '8.4.6'),
+('innodb_write_io_threads', '4'),
+('insert_id', '0'),
+('interactive_timeout', '28800'),
+('internal_tmp_mem_storage_engine', 'TempTable'),
+('join_buffer_size', '262144'),
+('keep_files_on_create', 'OFF'),
+('key_buffer_size', '33554432'),
+('key_cache_age_threshold', '300'),
+('key_cache_block_size', '1024'),
+('key_cache_division_limit', '100'),
+('keyring_operations', 'ON'),
+('large_files_support', 'ON'),
+('large_page_size', '0'),
+('large_pages', 'OFF'),
+('last_insert_id', '0'),
+('lc_messages', 'ru_RU'),
+('lc_messages_dir', 'D:\\OSPanel\\modules\\MySQL-8.4\\share\\'),
+('lc_time_names', 'en_US'),
+('license', 'GPL'),
+('local_infile', 'ON'),
+('lock_wait_timeout', '31536000'),
+('log_bin', 'OFF'),
+('log_bin_basename', ''),
+('log_bin_index', ''),
+('log_bin_trust_function_creators', 'OFF'),
+('log_error', 'stderr'),
+('log_error_services', 'log_filter_internal; log_sink_internal'),
+('log_error_suppression_list', ''),
+('log_error_verbosity', '3'),
+('log_output', 'FILE'),
+('log_queries_not_using_indexes', 'OFF'),
+('log_raw', 'OFF'),
+('log_replica_updates', 'OFF'),
+('log_slave_updates', 'OFF'),
+('log_slow_admin_statements', 'OFF'),
+('log_slow_extra', 'OFF'),
+('log_slow_replica_statements', 'OFF'),
+('log_slow_slave_statements', 'OFF'),
+('log_statements_unsafe_for_binlog', 'ON'),
+('log_throttle_queries_not_using_indexes', '0'),
+('log_timestamps', 'SYSTEM'),
+('long_query_time', '10.000000'),
+('low_priority_updates', 'OFF'),
+('lower_case_file_system', 'ON'),
+('lower_case_table_names', '2'),
+('mandatory_roles', ''),
+('master_verify_checksum', 'OFF'),
+('max_allowed_packet', '67108864'),
+('max_binlog_cache_size', '18446744073709547520'),
+('max_binlog_size', '1073741824'),
+('max_binlog_stmt_cache_size', '18446744073709547520'),
+('max_connect_errors', '32'),
+('max_connections', '128'),
+('max_delayed_threads', '20'),
+('max_digest_length', '1024'),
+('max_error_count', '1024'),
+('max_execution_time', '0'),
+('max_heap_table_size', '134217728'),
+('max_insert_delayed_threads', '20'),
+('max_join_size', '18446744073709551615'),
+('max_length_for_sort_data', '4096'),
+('max_points_in_geometry', '65536'),
+('max_prepared_stmt_count', '16382'),
+('max_relay_log_size', '0'),
+('max_seeks_for_key', '4294967295'),
+('max_sort_length', '1024'),
+('max_sp_recursion_depth', '0'),
+('max_user_connections', '0'),
+('max_write_lock_count', '4294967295'),
+('min_examined_row_limit', '0'),
+('myisam_data_pointer_size', '6'),
+('myisam_max_sort_file_size', '2146435072'),
+('myisam_mmap_size', '18446744073709551615'),
+('myisam_recover_options', 'BACKUP,FORCE'),
+('myisam_sort_buffer_size', '8388608'),
+('myisam_stats_method', 'nulls_unequal'),
+('myisam_use_mmap', 'OFF'),
+('mysql_native_password_proxy_users', 'OFF'),
+('mysqlx_bind_address', '127.0.1.28'),
+('mysqlx_compression_algorithms', 'DEFLATE_STREAM,LZ4_MESSAGE,ZSTD_STREAM'),
+('mysqlx_connect_timeout', '30'),
+('mysqlx_deflate_default_compression_level', '3'),
+('mysqlx_deflate_max_client_compression_level', '5'),
+('mysqlx_document_id_unique_prefix', '0'),
+('mysqlx_enable_hello_notice', 'ON'),
+('mysqlx_idle_worker_thread_timeout', '60'),
+('mysqlx_interactive_timeout', '28800'),
+('mysqlx_lz4_default_compression_level', '2'),
+('mysqlx_lz4_max_client_compression_level', '8'),
+('mysqlx_max_allowed_packet', '67108864'),
+('mysqlx_max_connections', '100'),
+('mysqlx_min_worker_threads', '2'),
+('mysqlx_port', '33060'),
+('mysqlx_port_open_timeout', '0'),
+('mysqlx_read_timeout', '30'),
+('mysqlx_socket', 'MySQL-8.4-X'),
+('mysqlx_ssl_ca', 'D:/OSPanel/data/ssl/cacert.pem'),
+('mysqlx_ssl_capath', ''),
+('mysqlx_ssl_cert', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.crt'),
+('mysqlx_ssl_cipher', ''),
+('mysqlx_ssl_crl', ''),
+('mysqlx_ssl_crlpath', ''),
+('mysqlx_ssl_key', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.key'),
+('mysqlx_wait_timeout', '28800'),
+('mysqlx_write_timeout', '60'),
+('mysqlx_zstd_default_compression_level', '3'),
+('mysqlx_zstd_max_client_compression_level', '11'),
+('named_pipe', 'ON'),
+('named_pipe_full_access_group', ''),
+('net_buffer_length', '16384'),
+('net_read_timeout', '30'),
+('net_retry_count', '10'),
+('net_write_timeout', '60'),
+('ngram_token_size', '2'),
+('offline_mode', 'OFF'),
+('old_alter_table', 'OFF'),
+('open_files_limit', '10378'),
+('optimizer_max_subgraph_pairs', '100000'),
+('optimizer_prune_level', '1'),
+('optimizer_search_depth', '62'),
+('optimizer_switch', 'index_merge=on,index_merge_union=on,index_merge_sort_union=on,index_merge_intersection=on,engine_condition_pushdown=on,index_condition_pushdown=on,mrr=on,mrr_cost_based=on,block_nested_loop=on,batched_key_access=off,materialization=on,semijoin=on,loosescan=on,firstmatch=on,duplicateweedout=on,subquery_materialization_cost_based=on,use_index_extensions=on,condition_fanout_filter=on,derived_merge=on,use_invisible_indexes=off,skip_scan=on,hash_join=on,subquery_to_derived=off,prefer_ordering_index=on,hypergraph_optimizer=off,derived_condition_pushdown=on,hash_set_operations=on'),
+('optimizer_trace', 'enabled=off,one_line=off'),
+('optimizer_trace_features', 'greedy_search=on,range_optimizer=on,dynamic_range=on,repeated_subselect=on'),
+('optimizer_trace_limit', '1'),
+('optimizer_trace_max_mem_size', '1048576'),
+('optimizer_trace_offset', '-1'),
+('original_commit_timestamp', '36028797018963968'),
+('original_server_version', '999999'),
+('parser_max_mem_size', '18446744073709551615'),
+('partial_revokes', 'OFF'),
+('password_history', '0'),
+('password_require_current', 'OFF'),
+('password_reuse_interval', '0'),
+('performance_schema', 'OFF'),
+('performance_schema_accounts_size', '0'),
+('performance_schema_digests_size', '0'),
+('performance_schema_error_size', '5548'),
+('performance_schema_events_stages_history_long_size', '0'),
+('performance_schema_events_stages_history_size', '0'),
+('performance_schema_events_statements_history_long_size', '0'),
+('performance_schema_events_statements_history_size', '0'),
+('performance_schema_events_transactions_history_long_size', '0'),
+('performance_schema_events_transactions_history_size', '0'),
+('performance_schema_events_waits_history_long_size', '0'),
+('performance_schema_events_waits_history_size', '0'),
+('performance_schema_hosts_size', '0'),
+('performance_schema_max_cond_classes', '0'),
+('performance_schema_max_cond_instances', '0'),
+('performance_schema_max_digest_length', '0'),
+('performance_schema_max_digest_sample_age', '60'),
+('performance_schema_max_file_classes', '0'),
+('performance_schema_max_file_handles', '0'),
+('performance_schema_max_file_instances', '0'),
+('performance_schema_max_index_stat', '0'),
+('performance_schema_max_memory_classes', '0'),
+('performance_schema_max_metadata_locks', '0'),
+('performance_schema_max_meter_classes', '0'),
+('performance_schema_max_metric_classes', '0'),
+('performance_schema_max_mutex_classes', '0'),
+('performance_schema_max_mutex_instances', '0'),
+('performance_schema_max_prepared_statements_instances', '0'),
+('performance_schema_max_program_instances', '0'),
+('performance_schema_max_rwlock_classes', '0'),
+('performance_schema_max_rwlock_instances', '0'),
+('performance_schema_max_socket_classes', '0'),
+('performance_schema_max_socket_instances', '0'),
+('performance_schema_max_sql_text_length', '0'),
+('performance_schema_max_stage_classes', '0'),
+('performance_schema_max_statement_classes', '0'),
+('performance_schema_max_statement_stack', '0'),
+('performance_schema_max_table_handles', '0'),
+('performance_schema_max_table_instances', '0'),
+('performance_schema_max_table_lock_stat', '0'),
+('performance_schema_max_thread_classes', '0'),
+('performance_schema_max_thread_instances', '0'),
+('performance_schema_session_connect_attrs_size', '0'),
+('performance_schema_setup_actors_size', '0'),
+('performance_schema_setup_objects_size', '0'),
+('performance_schema_show_processlist', 'OFF'),
+('performance_schema_users_size', '0'),
+('persist_only_admin_x509_subject', ''),
+('persist_sensitive_variables_in_plaintext', 'ON'),
+('persisted_globals_load', 'ON'),
+('pid_file', 'D:/OSPanel/temp/MySQL-8.4.pid'),
+('plugin_dir', 'D:\\OSPanel\\modules\\MySQL-8.4\\lib\\plugin\\'),
+('port', '3306'),
+('preload_buffer_size', '32768'),
+('print_identified_with_as_hex', 'OFF'),
+('profiling', 'OFF'),
+('profiling_history_size', '15'),
+('protocol_compression_algorithms', 'zlib,zstd,uncompressed'),
+('protocol_version', '10'),
+('proxy_user', ''),
+('pseudo_replica_mode', 'OFF'),
+('pseudo_slave_mode', 'OFF'),
+('pseudo_thread_id', '27120'),
+('query_alloc_block_size', '8192'),
+('query_prealloc_size', '8192'),
+('rand_seed1', '0'),
+('rand_seed2', '0'),
+('range_alloc_block_size', '4096'),
+('range_optimizer_max_mem_size', '8388608'),
+('rbr_exec_mode', 'STRICT'),
+('read_buffer_size', '131072'),
+('read_only', 'OFF'),
+('read_rnd_buffer_size', '262144'),
+('regexp_stack_limit', '8000000'),
+('regexp_time_limit', '32'),
+('relay_log', 'Ekaterina-relay-bin'),
+('relay_log_basename', 'D:\\OSPanel\\data\\MySQL-8.4\\default\\Ekaterina-relay-bin'),
+('relay_log_index', 'D:\\OSPanel\\data\\MySQL-8.4\\default\\Ekaterina-relay-bin.index'),
+('relay_log_purge', 'ON'),
+('relay_log_recovery', 'OFF'),
+('relay_log_space_limit', '0'),
+('replica_allow_batching', 'ON'),
+('replica_checkpoint_group', '512'),
+('replica_checkpoint_period', '300'),
+('replica_compressed_protocol', 'OFF'),
+('replica_exec_mode', 'STRICT'),
+('replica_load_tmpdir', 'D:\\OSPanel\\temp\\MySQL-8.4\\default'),
+('replica_max_allowed_packet', '1073741824'),
+('replica_net_timeout', '60'),
+('replica_parallel_type', 'LOGICAL_CLOCK'),
+('replica_parallel_workers', '4'),
+('replica_pending_jobs_size_max', '134217728'),
+('replica_preserve_commit_order', 'ON'),
+('replica_skip_errors', 'OFF'),
+('replica_sql_verify_checksum', 'ON'),
+('replica_transaction_retries', '10'),
+('replica_type_conversions', ''),
+('replication_optimize_for_static_plugin_config', 'OFF'),
+('replication_sender_observe_commit_only', 'OFF'),
+('report_host', ''),
+('report_password', ''),
+('report_port', '3306'),
+('report_user', ''),
+('require_row_format', 'OFF'),
+('require_secure_transport', 'OFF'),
+('restrict_fk_on_non_standard_key', 'ON'),
+('resultset_metadata', 'FULL'),
+('rpl_read_size', '8192'),
+('rpl_stop_replica_timeout', '31536000'),
+('rpl_stop_slave_timeout', '31536000'),
+('schema_definition_cache', '256'),
+('secondary_engine_cost_threshold', '100000.000000'),
+('secure_file_priv', 'D:\\OSPanel\\temp\\upload\\'),
+('select_into_buffer_size', '131072'),
+('select_into_disk_sync', 'OFF'),
+('select_into_disk_sync_delay', '0'),
+('server_id', '1'),
+('server_id_bits', '32'),
+('server_uuid', 'aad6c3d3-ac00-11f0-8615-7ced8d07332a'),
+('session_track_gtids', 'OFF'),
+('session_track_schema', 'ON'),
+('session_track_state_change', 'OFF'),
+('session_track_system_variables', 'time_zone,autocommit,character_set_client,character_set_results,character_set_connection'),
+('session_track_transaction_info', 'OFF'),
+('set_operations_buffer_size', '262144'),
+('sha256_password_auto_generate_rsa_keys', 'ON'),
+('sha256_password_private_key_path', 'private_key.pem'),
+('sha256_password_proxy_users', 'OFF'),
+('sha256_password_public_key_path', 'public_key.pem'),
+('shared_memory', 'OFF'),
+('shared_memory_base_name', 'MYSQL'),
+('show_create_table_skip_secondary_engine', 'OFF'),
+('show_create_table_verbosity', 'OFF'),
+('show_gipk_in_create_table_and_information_schema', 'ON'),
+('skip_external_locking', 'ON'),
+('skip_name_resolve', 'OFF'),
+('skip_networking', 'OFF'),
+('skip_replica_start', 'OFF'),
+('skip_show_database', 'OFF'),
+('skip_slave_start', 'OFF'),
+('slave_allow_batching', 'ON'),
+('slave_checkpoint_group', '512'),
+('slave_checkpoint_period', '300'),
+('slave_compressed_protocol', 'OFF'),
+('slave_exec_mode', 'STRICT'),
+('slave_load_tmpdir', 'D:\\OSPanel\\temp\\MySQL-8.4\\default'),
+('slave_max_allowed_packet', '1073741824'),
+('slave_net_timeout', '60'),
+('slave_parallel_type', 'LOGICAL_CLOCK'),
+('slave_parallel_workers', '4'),
+('slave_pending_jobs_size_max', '134217728'),
+('slave_preserve_commit_order', 'ON'),
+('slave_skip_errors', 'OFF'),
+('slave_sql_verify_checksum', 'ON'),
+('slave_transaction_retries', '10'),
+('slave_type_conversions', ''),
+('slow_launch_time', '2'),
+('slow_query_log', 'OFF'),
+('slow_query_log_file', 'D:\\OSPanel\\data\\MySQL-8.4\\default\\Ekaterina-slow.log'),
+('socket', 'MySQL-8.4'),
+('sort_buffer_size', '262144'),
+('source_verify_checksum', 'OFF'),
+('sql_auto_is_null', 'OFF'),
+('sql_big_selects', 'ON'),
+('sql_buffer_result', 'OFF'),
+('sql_generate_invisible_primary_key', 'OFF'),
+('sql_log_bin', 'ON'),
+('sql_log_off', 'OFF'),
+('sql_mode', ''),
+('sql_notes', 'ON'),
+('sql_quote_show_create', 'ON'),
+('sql_replica_skip_counter', '0'),
+('sql_require_primary_key', 'OFF'),
+('sql_safe_updates', 'OFF'),
+('sql_select_limit', '18446744073709551615'),
+('sql_slave_skip_counter', '0'),
+('sql_warnings', 'OFF'),
+('ssl_ca', 'D:/OSPanel/data/ssl/cacert.pem'),
+('ssl_capath', ''),
+('ssl_cert', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.crt'),
+('ssl_cipher', ''),
+('ssl_crl', ''),
+('ssl_crlpath', ''),
+('ssl_fips_mode', 'OFF'),
+('ssl_key', 'D:/OSPanel/data/ssl/modules/MySQL-8.4/cert.key'),
+('ssl_session_cache_mode', 'ON'),
+('ssl_session_cache_timeout', '300'),
+('statement_id', '1992045'),
+('stored_program_cache', '256'),
+('stored_program_definition_cache', '256'),
+('super_read_only', 'OFF'),
+('sync_binlog', '1'),
+('sync_master_info', '10000'),
+('sync_relay_log', '10000'),
+('sync_relay_log_info', '10000'),
+('sync_source_info', '10000'),
+('system_time_zone', 'Etc'),
+('table_definition_cache', '4096'),
+('table_encryption_privilege_check', 'OFF'),
+('table_open_cache', '4096'),
+('table_open_cache_instances', '16'),
+('tablespace_definition_cache', '256'),
+('temptable_max_mmap', '0'),
+('temptable_max_ram', '1073741824'),
+('temptable_use_mmap', 'OFF'),
+('terminology_use_previous', 'NONE'),
+('thread_cache_size', '4'),
+('thread_handling', 'one-thread-per-connection'),
+('thread_stack', '1048576'),
+('time_zone', '+00:00'),
+('timestamp', '1765284106.522483'),
+('tls_certificates_enforced_validation', 'OFF'),
+('tls_ciphersuites', ''),
+('tls_version', 'TLSv1.2,TLSv1.3'),
+('tmp_table_size', '16777216'),
+('tmpdir', 'D:/OSPanel/temp/MySQL-8.4/default'),
+('transaction_alloc_block_size', '8192'),
+('transaction_allow_batching', 'OFF'),
+('transaction_isolation', 'REPEATABLE-READ'),
+('transaction_prealloc_size', '4096'),
+('transaction_read_only', 'OFF'),
+('unique_checks', 'ON'),
+('updatable_views_with_limit', 'YES'),
+('use_secondary_engine', 'ON'),
+('version', '8.4.6'),
+('version_comment', 'MySQL Community Server - GPL'),
+('version_compile_machine', 'x86_64'),
+('version_compile_os', 'Win64'),
+('version_compile_zlib', '1.3.1'),
+('wait_timeout', '28800'),
+('warning_count', '0'),
+('windowing_use_high_precision', 'ON'),
+('xa_detach_on_prepare', 'ON');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `setup_actors`
+--
+
+CREATE TABLE `setup_actors` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '%',
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '%',
+  `ROLE` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '%',
+  `ENABLED` enum('YES','NO') NOT NULL DEFAULT 'YES',
+  `HISTORY` enum('YES','NO') NOT NULL DEFAULT 'YES'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `setup_consumers`
+--
+
+CREATE TABLE `setup_consumers` (
+  `NAME` varchar(64) NOT NULL,
+  `ENABLED` enum('YES','NO') NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `setup_instruments`
+--
+
+CREATE TABLE `setup_instruments` (
+  `NAME` varchar(128) NOT NULL,
+  `ENABLED` enum('YES','NO') NOT NULL,
+  `TIMED` enum('YES','NO') DEFAULT NULL,
+  `PROPERTIES` set('singleton','progress','user','global_statistics','mutable','controlled_by_default') NOT NULL,
+  `FLAGS` set('controlled') DEFAULT NULL,
+  `VOLATILITY` int NOT NULL,
+  `DOCUMENTATION` longtext
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `setup_meters`
+--
+
+CREATE TABLE `setup_meters` (
+  `NAME` varchar(63) NOT NULL,
+  `FREQUENCY` mediumint UNSIGNED NOT NULL,
+  `ENABLED` enum('YES','NO') NOT NULL,
+  `DESCRIPTION` varchar(1023) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `setup_metrics`
+--
+
+CREATE TABLE `setup_metrics` (
+  `NAME` varchar(63) NOT NULL,
+  `METER` varchar(63) NOT NULL,
+  `METRIC_TYPE` enum('ASYNC COUNTER','ASYNC UPDOWN COUNTER','ASYNC GAUGE COUNTER') NOT NULL,
+  `NUM_TYPE` enum('INTEGER','DOUBLE') NOT NULL,
+  `UNIT` varchar(63) DEFAULT NULL,
+  `DESCRIPTION` varchar(1023) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `setup_objects`
+--
+
+CREATE TABLE `setup_objects` (
+  `OBJECT_TYPE` enum('EVENT','FUNCTION','PROCEDURE','TABLE','TRIGGER') NOT NULL DEFAULT 'TABLE',
+  `OBJECT_SCHEMA` varchar(64) DEFAULT '%',
+  `OBJECT_NAME` varchar(64) NOT NULL DEFAULT '%',
+  `ENABLED` enum('YES','NO') NOT NULL DEFAULT 'YES',
+  `TIMED` enum('YES','NO') NOT NULL DEFAULT 'YES'
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `setup_threads`
+--
+
+CREATE TABLE `setup_threads` (
+  `NAME` varchar(128) NOT NULL,
+  `ENABLED` enum('YES','NO') NOT NULL,
+  `HISTORY` enum('YES','NO') NOT NULL,
+  `PROPERTIES` set('singleton','user') NOT NULL,
+  `VOLATILITY` int NOT NULL,
+  `DOCUMENTATION` longtext
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `socket_instances`
+--
+
+CREATE TABLE `socket_instances` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `SOCKET_ID` int NOT NULL,
+  `IP` varchar(64) NOT NULL,
+  `PORT` int NOT NULL,
+  `STATE` enum('IDLE','ACTIVE') NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `socket_summary_by_event_name`
+--
+
+CREATE TABLE `socket_summary_by_event_name` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_READ` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_MISC` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_MISC` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `socket_summary_by_instance`
+--
+
+CREATE TABLE `socket_summary_by_instance` (
+  `EVENT_NAME` varchar(128) NOT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_READ` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_NUMBER_OF_BYTES_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_MISC` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_MISC` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_MISC` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `status_by_account`
+--
+
+CREATE TABLE `status_by_account` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `status_by_host`
+--
+
+CREATE TABLE `status_by_host` (
+  `HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `status_by_thread`
+--
+
+CREATE TABLE `status_by_thread` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `status_by_user`
+--
+
+CREATE TABLE `status_by_user` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `table_handles`
+--
+
+CREATE TABLE `table_handles` (
+  `OBJECT_TYPE` varchar(64) NOT NULL,
+  `OBJECT_SCHEMA` varchar(64) NOT NULL,
+  `OBJECT_NAME` varchar(64) NOT NULL,
+  `OBJECT_INSTANCE_BEGIN` bigint UNSIGNED NOT NULL,
+  `OWNER_THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `OWNER_EVENT_ID` bigint UNSIGNED DEFAULT NULL,
+  `INTERNAL_LOCK` varchar(64) DEFAULT NULL,
+  `EXTERNAL_LOCK` varchar(64) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `table_io_waits_summary_by_index_usage`
+--
+
+CREATE TABLE `table_io_waits_summary_by_index_usage` (
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `INDEX_NAME` varchar(64) DEFAULT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_FETCH` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_FETCH` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_FETCH` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_FETCH` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_FETCH` bigint UNSIGNED NOT NULL,
+  `COUNT_INSERT` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_INSERT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_INSERT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_INSERT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_INSERT` bigint UNSIGNED NOT NULL,
+  `COUNT_UPDATE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_UPDATE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_UPDATE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_UPDATE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_UPDATE` bigint UNSIGNED NOT NULL,
+  `COUNT_DELETE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_DELETE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_DELETE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_DELETE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_DELETE` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `table_io_waits_summary_by_table`
+--
+
+CREATE TABLE `table_io_waits_summary_by_table` (
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_FETCH` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_FETCH` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_FETCH` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_FETCH` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_FETCH` bigint UNSIGNED NOT NULL,
+  `COUNT_INSERT` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_INSERT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_INSERT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_INSERT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_INSERT` bigint UNSIGNED NOT NULL,
+  `COUNT_UPDATE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_UPDATE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_UPDATE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_UPDATE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_UPDATE` bigint UNSIGNED NOT NULL,
+  `COUNT_DELETE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_DELETE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_DELETE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_DELETE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_DELETE` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `table_lock_waits_summary_by_table`
+--
+
+CREATE TABLE `table_lock_waits_summary_by_table` (
+  `OBJECT_TYPE` varchar(64) DEFAULT NULL,
+  `OBJECT_SCHEMA` varchar(64) DEFAULT NULL,
+  `OBJECT_NAME` varchar(64) DEFAULT NULL,
+  `COUNT_STAR` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WAIT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_NORMAL` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_NORMAL` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_NORMAL` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_NORMAL` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_NORMAL` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_WITH_SHARED_LOCKS` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_WITH_SHARED_LOCKS` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_WITH_SHARED_LOCKS` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_WITH_SHARED_LOCKS` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_WITH_SHARED_LOCKS` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_HIGH_PRIORITY` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_HIGH_PRIORITY` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_HIGH_PRIORITY` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_HIGH_PRIORITY` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_HIGH_PRIORITY` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_NO_INSERT` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_NO_INSERT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_NO_INSERT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_NO_INSERT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_NO_INSERT` bigint UNSIGNED NOT NULL,
+  `COUNT_READ_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_READ_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_READ_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_READ_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_READ_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE_ALLOW_WRITE` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE_ALLOW_WRITE` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE_ALLOW_WRITE` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE_ALLOW_WRITE` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE_ALLOW_WRITE` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE_CONCURRENT_INSERT` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE_CONCURRENT_INSERT` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE_CONCURRENT_INSERT` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE_CONCURRENT_INSERT` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE_CONCURRENT_INSERT` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE_LOW_PRIORITY` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE_LOW_PRIORITY` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE_LOW_PRIORITY` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE_LOW_PRIORITY` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE_LOW_PRIORITY` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE_NORMAL` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE_NORMAL` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE_NORMAL` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE_NORMAL` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE_NORMAL` bigint UNSIGNED NOT NULL,
+  `COUNT_WRITE_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `SUM_TIMER_WRITE_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `MIN_TIMER_WRITE_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `AVG_TIMER_WRITE_EXTERNAL` bigint UNSIGNED NOT NULL,
+  `MAX_TIMER_WRITE_EXTERNAL` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `threads`
+--
+
+CREATE TABLE `threads` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `NAME` varchar(128) NOT NULL,
+  `TYPE` varchar(10) NOT NULL,
+  `PROCESSLIST_ID` bigint UNSIGNED DEFAULT NULL,
+  `PROCESSLIST_USER` varchar(32) DEFAULT NULL,
+  `PROCESSLIST_HOST` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
+  `PROCESSLIST_DB` varchar(64) DEFAULT NULL,
+  `PROCESSLIST_COMMAND` varchar(16) DEFAULT NULL,
+  `PROCESSLIST_TIME` bigint DEFAULT NULL,
+  `PROCESSLIST_STATE` varchar(64) DEFAULT NULL,
+  `PROCESSLIST_INFO` longtext,
+  `PARENT_THREAD_ID` bigint UNSIGNED DEFAULT NULL,
+  `ROLE` varchar(64) DEFAULT NULL,
+  `INSTRUMENTED` enum('YES','NO') NOT NULL,
+  `HISTORY` enum('YES','NO') NOT NULL,
+  `CONNECTION_TYPE` varchar(16) DEFAULT NULL,
+  `THREAD_OS_ID` bigint UNSIGNED DEFAULT NULL,
+  `RESOURCE_GROUP` varchar(64) DEFAULT NULL,
+  `EXECUTION_ENGINE` enum('PRIMARY','SECONDARY') DEFAULT NULL,
+  `CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_TOTAL_MEMORY` bigint UNSIGNED NOT NULL,
+  `TELEMETRY_ACTIVE` enum('YES','NO') NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `tls_channel_status`
+--
+
+CREATE TABLE `tls_channel_status` (
+  `CHANNEL` varchar(128) NOT NULL,
+  `PROPERTY` varchar(128) NOT NULL,
+  `VALUE` varchar(2048) NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `users`
+--
+
+CREATE TABLE `users` (
+  `USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `CURRENT_CONNECTIONS` bigint NOT NULL,
+  `TOTAL_CONNECTIONS` bigint NOT NULL,
+  `MAX_SESSION_CONTROLLED_MEMORY` bigint UNSIGNED NOT NULL,
+  `MAX_SESSION_TOTAL_MEMORY` bigint UNSIGNED NOT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `user_defined_functions`
+--
+
+CREATE TABLE `user_defined_functions` (
+  `UDF_NAME` varchar(64) NOT NULL,
+  `UDF_RETURN_TYPE` varchar(20) NOT NULL,
+  `UDF_TYPE` varchar(20) NOT NULL,
+  `UDF_LIBRARY` varchar(1024) DEFAULT NULL,
+  `UDF_USAGE_COUNT` bigint DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `user_variables_by_thread`
+--
+
+CREATE TABLE `user_variables_by_thread` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` longblob
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `variables_by_thread`
+--
+
+CREATE TABLE `variables_by_thread` (
+  `THREAD_ID` bigint UNSIGNED NOT NULL,
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_VALUE` varchar(1024) DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `variables_info`
+--
+
+CREATE TABLE `variables_info` (
+  `VARIABLE_NAME` varchar(64) NOT NULL,
+  `VARIABLE_SOURCE` enum('COMPILED','GLOBAL','SERVER','EXPLICIT','EXTRA','USER','LOGIN','COMMAND_LINE','PERSISTED','DYNAMIC') DEFAULT 'COMPILED',
+  `VARIABLE_PATH` varchar(1024) DEFAULT NULL,
+  `MIN_VALUE` varchar(64) DEFAULT NULL,
+  `MAX_VALUE` varchar(64) DEFAULT NULL,
+  `SET_TIME` timestamp(6) NULL DEFAULT NULL,
+  `SET_USER` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `SET_HOST` char(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL
+) ENGINE=PERFORMANCE_SCHEMA DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `variables_info`
+--
+
+INSERT INTO `variables_info` (`VARIABLE_NAME`, `VARIABLE_SOURCE`, `VARIABLE_PATH`, `MIN_VALUE`, `MAX_VALUE`, `SET_TIME`, `SET_USER`, `SET_HOST`) VALUES
+('activate_all_roles_on_login', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_address', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_port', 'COMPILED', '', '0', '65535', NULL, NULL, NULL),
+('admin_ssl_ca', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_ssl_capath', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_ssl_cert', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_ssl_cipher', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_ssl_crl', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_ssl_crlpath', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_ssl_key', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_tls_ciphersuites', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('admin_tls_version', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('authentication_policy', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('auto_generate_certs', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('auto_increment_increment', 'COMPILED', '', '1', '65535', NULL, NULL, NULL),
+('auto_increment_offset', 'COMPILED', '', '1', '65535', NULL, NULL, NULL),
+('autocommit', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('automatic_sp_privileges', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('back_log', 'COMPILED', '', '0', '65535', NULL, NULL, NULL),
+('basedir', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('big_tables', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('bind_address', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('binlog_cache_size', 'COMPILED', '', '4096', '4294963200', NULL, NULL, NULL),
+('binlog_checksum', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_direct_non_transactional_updates', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_encryption', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_error_action', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_expire_logs_auto_purge', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_expire_logs_seconds', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('binlog_format', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_group_commit_sync_delay', 'COMPILED', '', '0', '1000000', NULL, NULL, NULL),
+('binlog_group_commit_sync_no_delay_count', 'COMPILED', '', '0', '100000', NULL, NULL, NULL),
+('binlog_gtid_simple_recovery', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_max_flush_queue_time', 'COMPILED', '', '0', '100000', NULL, NULL, NULL),
+('binlog_order_commits', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_rotate_encryption_master_key_at_startup', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_row_event_max_size', 'COMPILED', '', '256', '4294967040', NULL, NULL, NULL),
+('binlog_row_image', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_row_metadata', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_row_value_options', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_rows_query_log_events', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_stmt_cache_size', 'COMPILED', '', '4096', '4294963200', NULL, NULL, NULL),
+('binlog_transaction_compression', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('binlog_transaction_compression_level_zstd', 'COMPILED', '', '1', '22', NULL, NULL, NULL),
+('binlog_transaction_dependency_history_size', 'COMPILED', '', '1', '1000000', NULL, NULL, NULL),
+('block_encryption_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('bulk_insert_buffer_size', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('caching_sha2_password_auto_generate_rsa_keys', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('caching_sha2_password_digest_rounds', 'COMPILED', '', '5000', '4095000', NULL, NULL, NULL),
+('caching_sha2_password_private_key_path', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('caching_sha2_password_public_key_path', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('character_set_client', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('character_set_connection', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('character_set_database', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('character_set_filesystem', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('character_set_results', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('character_set_server', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('character_set_system', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('character_sets_dir', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('check_proxy_users', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('collation_connection', 'DYNAMIC', '', '0', '0', '2025-12-09 12:41:44.185051', 'root', 'localhost'),
+('collation_database', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('collation_server', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('completion_type', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('concurrent_insert', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('connect_timeout', 'COMPILED', '', '2', '31536000', NULL, NULL, NULL),
+('connection_memory_chunk_size', 'COMPILED', '', '1', '536870912', NULL, NULL, NULL),
+('connection_memory_limit', 'COMPILED', '', '2097152', '18446744073709551615', NULL, NULL, NULL),
+('core_file', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('create_admin_listener_thread', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('cte_max_recursion_depth', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('datadir', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('default_collation_for_utf8mb4', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('default_password_lifetime', 'COMPILED', '', '0', '65535', NULL, NULL, NULL),
+('default_storage_engine', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('default_table_encryption', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('default_tmp_storage_engine', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('default_week_format', 'COMPILED', '', '0', '7', NULL, NULL, NULL),
+('delay_key_write', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('delayed_insert_limit', 'COMPILED', '', '1', '4294967295', NULL, NULL, NULL),
+('delayed_insert_timeout', 'COMPILED', '', '1', '31536000', NULL, NULL, NULL),
+('delayed_queue_size', 'COMPILED', '', '1', '4294967295', NULL, NULL, NULL),
+('disabled_storage_engines', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('disconnect_on_expired_password', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('div_precision_increment', 'COMPILED', '', '0', '30', NULL, NULL, NULL),
+('end_markers_in_json', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('enforce_gtid_consistency', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('eq_range_index_dive_limit', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('error_count', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL),
+('event_scheduler', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('explain_format', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('explain_json_format_version', 'COMPILED', '', '1', '2', NULL, NULL, NULL),
+('explicit_defaults_for_timestamp', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('external_user', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('flush', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('flush_time', 'COMPILED', '', '0', '31536000', NULL, NULL, NULL),
+('foreign_key_checks', 'DYNAMIC', '', '0', '0', '2025-11-22 08:26:07.982882', NULL, NULL),
+('ft_boolean_syntax', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('ft_max_word_len', 'COMPILED', '', '10', '84', NULL, NULL, NULL),
+('ft_min_word_len', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '1', '84', NULL, NULL, NULL),
+('ft_query_expansion_limit', 'COMPILED', '', '0', '1000', NULL, NULL, NULL),
+('ft_stopword_file', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('general_log', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('general_log_file', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('generated_random_password_length', 'COMPILED', '', '5', '255', NULL, NULL, NULL),
+('global_connection_memory_limit', 'COMPILED', '', '16777216', '18446744073709551615', NULL, NULL, NULL),
+('global_connection_memory_tracking', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('group_concat_max_len', 'DYNAMIC', '', '4', '4294967295', '2025-11-30 19:48:41.518413', 'root', 'localhost'),
+('group_replication_consistency', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('gtid_executed', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('gtid_executed_compression_period', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('gtid_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('gtid_next', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('gtid_owned', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('gtid_purged', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('have_compress', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('have_dynamic_loading', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('have_geometry', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('have_profiling', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('have_query_cache', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('have_rtree_keys', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('have_statement_timeout', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('have_symlink', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('histogram_generation_max_mem_size', 'COMPILED', '', '1000000', '18446744073709551615', NULL, NULL, NULL),
+('host_cache_size', 'COMPILED', '', '0', '65536', NULL, NULL, NULL),
+('hostname', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('identity', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL),
+('immediate_server_version', 'COMPILED', '', '0', '999999', NULL, NULL, NULL),
+('information_schema_stats_expiry', 'COMPILED', '', '0', '31536000', NULL, NULL, NULL),
+('init_connect', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('init_file', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('init_replica', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('init_slave', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_adaptive_flushing', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_adaptive_flushing_lwm', 'COMPILED', '', '0', '70', NULL, NULL, NULL),
+('innodb_adaptive_hash_index', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_adaptive_hash_index_parts', 'COMPILED', '', '1', '512', NULL, NULL, NULL),
+('innodb_adaptive_max_sleep_delay', 'COMPILED', '', '0', '1000000', NULL, NULL, NULL),
+('innodb_api_bk_commit_interval', 'COMPILED', '', '1', '1073741824', NULL, NULL, NULL),
+('innodb_api_disable_rowlock', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_api_enable_binlog', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_api_enable_mdl', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_api_trx_level', 'COMPILED', '', '0', '3', NULL, NULL, NULL),
+('innodb_autoextend_increment', 'COMPILED', '', '1', '1000', NULL, NULL, NULL),
+('innodb_autoinc_lock_mode', 'COMPILED', '', '0', '2', NULL, NULL, NULL),
+('innodb_buffer_pool_chunk_size', 'COMPILED', '', '1048576', '144115188075855871', NULL, NULL, NULL),
+('innodb_buffer_pool_dump_at_shutdown', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_buffer_pool_dump_now', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_buffer_pool_dump_pct', 'COMPILED', '', '1', '100', NULL, NULL, NULL),
+('innodb_buffer_pool_filename', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_buffer_pool_in_core_file', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_buffer_pool_instances', 'COMPILED', '', '0', '64', NULL, NULL, NULL),
+('innodb_buffer_pool_load_abort', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_buffer_pool_load_at_startup', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_buffer_pool_load_now', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_buffer_pool_size', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '5242880', '9223372036854775807', NULL, NULL, NULL),
+('innodb_change_buffer_max_size', 'COMPILED', '', '0', '50', NULL, NULL, NULL),
+('innodb_change_buffering', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_checksum_algorithm', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_cmp_per_index_enabled', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_commit_concurrency', 'COMPILED', '', '0', '1000', NULL, NULL, NULL),
+('innodb_compression_failure_threshold_pct', 'COMPILED', '', '0', '100', NULL, NULL, NULL),
+('innodb_compression_level', 'COMPILED', '', '0', '9', NULL, NULL, NULL),
+('innodb_compression_pad_pct_max', 'COMPILED', '', '0', '75', NULL, NULL, NULL),
+('innodb_concurrency_tickets', 'COMPILED', '', '1', '4294967295', NULL, NULL, NULL),
+('innodb_data_file_path', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('innodb_data_home_dir', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('innodb_ddl_buffer_size', 'COMPILED', '', '65536', '4294967295', NULL, NULL, NULL),
+('innodb_ddl_threads', 'COMPILED', '', '1', '64', NULL, NULL, NULL),
+('innodb_deadlock_detect', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_dedicated_server', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_default_row_format', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_directories', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_disable_sort_file_cache', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_doublewrite', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_doublewrite_batch_size', 'COMPILED', '', '0', '256', NULL, NULL, NULL),
+('innodb_doublewrite_dir', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_doublewrite_files', 'COMPILED', '', '1', '256', NULL, NULL, NULL),
+('innodb_doublewrite_pages', 'COMPILED', '', '1', '512', NULL, NULL, NULL),
+('innodb_extend_and_initialize', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_fast_shutdown', 'COMPILED', '', '0', '2', NULL, NULL, NULL),
+('innodb_file_per_table', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('innodb_fill_factor', 'COMPILED', '', '10', '100', NULL, NULL, NULL),
+('innodb_flush_log_at_timeout', 'COMPILED', '', '0', '2700', NULL, NULL, NULL),
+('innodb_flush_log_at_trx_commit', 'COMPILED', '', '0', '2', NULL, NULL, NULL),
+('innodb_flush_method', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_flush_neighbors', 'COMPILED', '', '0', '2', NULL, NULL, NULL),
+('innodb_flush_sync', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_flushing_avg_loops', 'COMPILED', '', '1', '1000', NULL, NULL, NULL),
+('innodb_force_load_corrupted', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_force_recovery', 'COMPILED', '', '0', '6', NULL, NULL, NULL),
+('innodb_fsync_threshold', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL),
+('innodb_ft_aux_table', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_ft_cache_size', 'COMPILED', '', '1600000', '80000000', NULL, NULL, NULL),
+('innodb_ft_enable_diag_print', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_ft_enable_stopword', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_ft_max_token_size', 'COMPILED', '', '10', '84', NULL, NULL, NULL),
+('innodb_ft_min_token_size', 'COMPILED', '', '0', '16', NULL, NULL, NULL),
+('innodb_ft_num_word_optimize', 'COMPILED', '', '1000', '10000', NULL, NULL, NULL),
+('innodb_ft_result_cache_limit', 'COMPILED', '', '1000000', '4294967295', NULL, NULL, NULL),
+('innodb_ft_server_stopword_table', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_ft_sort_pll_degree', 'COMPILED', '', '1', '16', NULL, NULL, NULL),
+('innodb_ft_total_cache_size', 'COMPILED', '', '32000000', '1600000000', NULL, NULL, NULL),
+('innodb_ft_user_stopword_table', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_idle_flush_pct', 'COMPILED', '', '0', '100', NULL, NULL, NULL),
+('innodb_io_capacity', 'COMPILED', '', '100', '4294967295', NULL, NULL, NULL),
+('innodb_io_capacity_max', 'COMPILED', '', '100', '4294967295', NULL, NULL, NULL),
+('innodb_lock_wait_timeout', 'COMPILED', '', '1', '1073741824', NULL, NULL, NULL),
+('innodb_log_buffer_size', 'COMPILED', '', '262144', '4294967295', NULL, NULL, NULL),
+('innodb_log_checksums', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_log_compressed_pages', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_log_file_size', 'COMPILED', '', '4194304', '18446744073709551615', NULL, NULL, NULL),
+('innodb_log_files_in_group', 'COMPILED', '', '2', '100', NULL, NULL, NULL),
+('innodb_log_group_home_dir', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_log_spin_cpu_abs_lwm', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('innodb_log_spin_cpu_pct_hwm', 'COMPILED', '', '0', '100', NULL, NULL, NULL),
+('innodb_log_wait_for_flush_spin_hwm', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('innodb_log_write_ahead_size', 'COMPILED', '', '512', '16384', NULL, NULL, NULL),
+('innodb_log_writer_threads', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_lru_scan_depth', 'COMPILED', '', '100', '4294967295', NULL, NULL, NULL),
+('innodb_max_dirty_pages_pct', 'COMPILED', '', '0', '99', NULL, NULL, NULL),
+('innodb_max_dirty_pages_pct_lwm', 'COMPILED', '', '0', '99', NULL, NULL, NULL),
+('innodb_max_purge_lag', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('innodb_max_purge_lag_delay', 'COMPILED', '', '0', '10000000', NULL, NULL, NULL),
+('innodb_max_undo_log_size', 'COMPILED', '', '10485760', '18446744073709551615', NULL, NULL, NULL),
+('innodb_monitor_disable', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_monitor_enable', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_monitor_reset', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_monitor_reset_all', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_old_blocks_pct', 'COMPILED', '', '5', '95', NULL, NULL, NULL),
+('innodb_old_blocks_time', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('innodb_online_alter_log_max_size', 'COMPILED', '', '65536', '18446744073709551615', NULL, NULL, NULL),
+('innodb_open_files', 'COMPILED', '', '0', '2147483647', NULL, NULL, NULL),
+('innodb_optimize_fulltext_only', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_page_cleaners', 'COMPILED', '', '1', '64', NULL, NULL, NULL),
+('innodb_page_size', 'COMPILED', '', '4096', '65536', NULL, NULL, NULL),
+('innodb_parallel_read_threads', 'COMPILED', '', '1', '256', NULL, NULL, NULL),
+('innodb_print_all_deadlocks', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_print_ddl_logs', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_purge_batch_size', 'COMPILED', '', '1', '5000', NULL, NULL, NULL),
+('innodb_purge_rseg_truncate_frequency', 'COMPILED', '', '1', '128', NULL, NULL, NULL),
+('innodb_purge_threads', 'COMPILED', '', '1', '32', NULL, NULL, NULL),
+('innodb_random_read_ahead', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_read_ahead_threshold', 'COMPILED', '', '0', '64', NULL, NULL, NULL),
+('innodb_read_io_threads', 'COMPILED', '', '1', '64', NULL, NULL, NULL),
+('innodb_read_only', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_redo_log_archive_dirs', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_redo_log_capacity', 'COMPILED', '', '8388608', '549755813888', NULL, NULL, NULL),
+('innodb_redo_log_encrypt', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_replication_delay', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('innodb_rollback_on_timeout', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_rollback_segments', 'COMPILED', '', '1', '128', NULL, NULL, NULL),
+('innodb_segment_reserve_factor', 'COMPILED', '', '0', '40', NULL, NULL, NULL),
+('innodb_sort_buffer_size', 'COMPILED', '', '65536', '67108864', NULL, NULL, NULL),
+('innodb_spin_wait_delay', 'COMPILED', '', '0', '1000', NULL, NULL, NULL),
+('innodb_spin_wait_pause_multiplier', 'COMPILED', '', '0', '100', NULL, NULL, NULL),
+('innodb_stats_auto_recalc', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_stats_include_delete_marked', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_stats_method', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_stats_on_metadata', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_stats_persistent', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_stats_persistent_sample_pages', 'COMPILED', '', '1', '18446744073709551615', NULL, NULL, NULL),
+('innodb_stats_transient_sample_pages', 'COMPILED', '', '1', '18446744073709551615', NULL, NULL, NULL),
+('innodb_status_output', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_status_output_locks', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_strict_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_sync_array_size', 'COMPILED', '', '1', '1024', NULL, NULL, NULL),
+('innodb_sync_spin_loops', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('innodb_table_locks', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_temp_data_file_path', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_temp_tablespaces_dir', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_thread_concurrency', 'COMPILED', '', '0', '1000', NULL, NULL, NULL),
+('innodb_thread_sleep_delay', 'COMPILED', '', '0', '1000000', NULL, NULL, NULL),
+('innodb_tmpdir', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_undo_directory', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_undo_log_encrypt', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_undo_log_truncate', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_undo_tablespaces', 'COMPILED', '', '2', '127', NULL, NULL, NULL),
+('innodb_use_fdatasync', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_use_native_aio', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_validate_tablespace_paths', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_version', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('innodb_write_io_threads', 'COMPILED', '', '1', '64', NULL, NULL, NULL),
+('insert_id', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL),
+('interactive_timeout', 'COMPILED', '', '1', '31536000', NULL, NULL, NULL),
+('internal_tmp_mem_storage_engine', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('join_buffer_size', 'COMPILED', '', '128', '4294967168', NULL, NULL, NULL),
+('keep_files_on_create', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('key_buffer_size', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '18446744073709547520', NULL, NULL, NULL),
+('key_cache_age_threshold', 'COMPILED', '', '100', '4294967200', NULL, NULL, NULL),
+('key_cache_block_size', 'COMPILED', '', '512', '16384', NULL, NULL, NULL),
+('key_cache_division_limit', 'COMPILED', '', '1', '100', NULL, NULL, NULL),
+('keyring_operations', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('large_files_support', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('large_page_size', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('large_pages', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('last_insert_id', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL),
+('lc_messages', 'DYNAMIC', '', '0', '0', '2025-12-09 12:41:44.132035', 'root', 'localhost'),
+('lc_messages_dir', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('lc_time_names', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('license', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('local_infile', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('lock_wait_timeout', 'COMPILED', '', '1', '31536000', NULL, NULL, NULL),
+('log_bin', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_bin_basename', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_bin_index', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_bin_trust_function_creators', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_error', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_error_services', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_error_suppression_list', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_error_verbosity', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '1', '3', NULL, NULL, NULL),
+('log_output', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_queries_not_using_indexes', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_raw', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_replica_updates', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_slave_updates', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_slow_admin_statements', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_slow_extra', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_slow_replica_statements', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_slow_slave_statements', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_statements_unsafe_for_binlog', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('log_throttle_queries_not_using_indexes', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('log_timestamps', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('long_query_time', 'COMPILED', '', '0', '4719230590769954816', NULL, NULL, NULL),
+('low_priority_updates', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('lower_case_file_system', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('lower_case_table_names', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '2', NULL, NULL, NULL),
+('mandatory_roles', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('master_verify_checksum', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('max_allowed_packet', 'COMPILED', '', '1024', '1073741824', NULL, NULL, NULL),
+('max_binlog_cache_size', 'COMPILED', '', '4096', '18446744073709547520', NULL, NULL, NULL),
+('max_binlog_size', 'COMPILED', '', '4096', '1073741824', NULL, NULL, NULL),
+('max_binlog_stmt_cache_size', 'COMPILED', '', '4096', '18446744073709547520', NULL, NULL, NULL),
+('max_connect_errors', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '1', '4294967295', NULL, NULL, NULL),
+('max_connections', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '1', '100000', NULL, NULL, NULL),
+('max_delayed_threads', 'COMPILED', '', '0', '16384', NULL, NULL, NULL),
+('max_digest_length', 'COMPILED', '', '0', '1048576', NULL, NULL, NULL),
+('max_error_count', 'COMPILED', '', '0', '65535', NULL, NULL, NULL),
+('max_execution_time', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('max_heap_table_size', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '16384', '18446744073709550592', NULL, NULL, NULL),
+('max_insert_delayed_threads', 'COMPILED', '', '0', '16384', NULL, NULL, NULL),
+('max_join_size', 'COMPILED', '', '1', '18446744073709551615', NULL, NULL, NULL),
+('max_length_for_sort_data', 'COMPILED', '', '4', '8388608', NULL, NULL, NULL),
+('max_points_in_geometry', 'COMPILED', '', '3', '1048576', NULL, NULL, NULL),
+('max_prepared_stmt_count', 'COMPILED', '', '0', '4194304', NULL, NULL, NULL),
+('max_relay_log_size', 'COMPILED', '', '0', '1073741824', NULL, NULL, NULL),
+('max_seeks_for_key', 'COMPILED', '', '1', '4294967295', NULL, NULL, NULL),
+('max_sort_length', 'COMPILED', '', '4', '8388608', NULL, NULL, NULL),
+('max_sp_recursion_depth', 'COMPILED', '', '0', '255', NULL, NULL, NULL),
+('max_user_connections', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('max_write_lock_count', 'COMPILED', '', '1', '4294967295', NULL, NULL, NULL),
+('min_examined_row_limit', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('myisam_data_pointer_size', 'COMPILED', '', '2', '7', NULL, NULL, NULL),
+('myisam_max_sort_file_size', 'COMPILED', '', '0', '9223372036854775807', NULL, NULL, NULL),
+('myisam_mmap_size', 'COMPILED', '', '7', '18446744073709551615', NULL, NULL, NULL),
+('myisam_recover_options', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('myisam_sort_buffer_size', 'COMPILED', '', '4096', '18446744073709551615', NULL, NULL, NULL),
+('myisam_stats_method', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('myisam_use_mmap', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('mysql_native_password_proxy_users', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('mysqlx_bind_address', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('mysqlx_compression_algorithms', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('mysqlx_connect_timeout', 'COMPILED', '', '1', '1000000000', NULL, NULL, NULL),
+('mysqlx_deflate_default_compression_level', 'COMPILED', '', '1', '9', NULL, NULL, NULL),
+('mysqlx_deflate_max_client_compression_level', 'COMPILED', '', '1', '9', NULL, NULL, NULL),
+('mysqlx_document_id_unique_prefix', 'COMPILED', '', '0', '65535', NULL, NULL, NULL),
+('mysqlx_enable_hello_notice', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('mysqlx_idle_worker_thread_timeout', 'COMPILED', '', '0', '3600', NULL, NULL, NULL),
+('mysqlx_interactive_timeout', 'COMPILED', '', '1', '2147483', NULL, NULL, NULL),
+('mysqlx_lz4_default_compression_level', 'COMPILED', '', '0', '16', NULL, NULL, NULL),
+('mysqlx_lz4_max_client_compression_level', 'COMPILED', '', '0', '16', NULL, NULL, NULL),
+('mysqlx_max_allowed_packet', 'COMPILED', '', '512', '1073741824', NULL, NULL, NULL),
+('mysqlx_max_connections', 'COMPILED', '', '1', '65535', NULL, NULL, NULL),
+('mysqlx_min_worker_threads', 'COMPILED', '', '1', '100', NULL, NULL, NULL),
+('mysqlx_port', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '1', '65535', NULL, NULL, NULL),
+('mysqlx_port_open_timeout', 'COMPILED', '', '0', '120', NULL, NULL, NULL),
+('mysqlx_read_timeout', 'COMPILED', '', '1', '2147483', NULL, NULL, NULL),
+('mysqlx_socket', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('mysqlx_ssl_ca', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('mysqlx_ssl_capath', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('mysqlx_ssl_cert', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('mysqlx_ssl_cipher', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('mysqlx_ssl_crl', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('mysqlx_ssl_crlpath', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('mysqlx_ssl_key', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('mysqlx_wait_timeout', 'COMPILED', '', '1', '2147483', NULL, NULL, NULL),
+('mysqlx_write_timeout', 'COMPILED', '', '1', '2147483', NULL, NULL, NULL),
+('mysqlx_zstd_default_compression_level', 'COMPILED', '', '4294836224', '22', NULL, NULL, NULL),
+('mysqlx_zstd_max_client_compression_level', 'COMPILED', '', '4294836224', '22', NULL, NULL, NULL),
+('named_pipe', 'COMMAND_LINE', '', '0', '0', NULL, NULL, NULL),
+('named_pipe_full_access_group', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('net_buffer_length', 'COMPILED', '', '1024', '1048576', NULL, NULL, NULL),
+('net_read_timeout', 'COMPILED', '', '1', '31536000', NULL, NULL, NULL),
+('net_retry_count', 'COMPILED', '', '1', '4294967295', NULL, NULL, NULL),
+('net_write_timeout', 'COMPILED', '', '1', '31536000', NULL, NULL, NULL),
+('ngram_token_size', 'COMPILED', '', '1', '10', NULL, NULL, NULL),
+('offline_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('old_alter_table', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('open_files_limit', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('optimizer_max_subgraph_pairs', 'COMPILED', '', '1', '2147483647', NULL, NULL, NULL),
+('optimizer_prune_level', 'COMPILED', '', '0', '1', NULL, NULL, NULL),
+('optimizer_search_depth', 'COMPILED', '', '0', '62', NULL, NULL, NULL),
+('optimizer_switch', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('optimizer_trace', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('optimizer_trace_features', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('optimizer_trace_limit', 'COMPILED', '', '0', '2147483647', NULL, NULL, NULL),
+('optimizer_trace_max_mem_size', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('optimizer_trace_offset', 'COMPILED', '', '-2147483648', '2147483647', NULL, NULL, NULL),
+('original_commit_timestamp', 'COMPILED', '', '0', '36028797018963968', NULL, NULL, NULL),
+('original_server_version', 'COMPILED', '', '0', '999999', NULL, NULL, NULL),
+('parser_max_mem_size', 'COMPILED', '', '10000000', '18446744073709551615', NULL, NULL, NULL),
+('partial_revokes', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('password_history', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('password_require_current', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('password_reuse_interval', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('performance_schema', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('performance_schema_accounts_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_digests_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_error_size', 'COMPILED', '', '0', '1048576', NULL, NULL, NULL),
+('performance_schema_events_stages_history_long_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_events_stages_history_size', 'COMPILED', '', '-1', '1024', NULL, NULL, NULL),
+('performance_schema_events_statements_history_long_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_events_statements_history_size', 'COMPILED', '', '-1', '1024', NULL, NULL, NULL),
+('performance_schema_events_transactions_history_long_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_events_transactions_history_size', 'COMPILED', '', '-1', '1024', NULL, NULL, NULL),
+('performance_schema_events_waits_history_long_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_events_waits_history_size', 'COMPILED', '', '-1', '1024', NULL, NULL, NULL),
+('performance_schema_hosts_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_cond_classes', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('performance_schema_max_cond_instances', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_digest_length', 'COMPILED', '', '0', '1048576', NULL, NULL, NULL),
+('performance_schema_max_digest_sample_age', 'COMPILED', '', '0', '1048576', NULL, NULL, NULL),
+('performance_schema_max_file_classes', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('performance_schema_max_file_handles', 'COMPILED', '', '0', '1048576', NULL, NULL, NULL),
+('performance_schema_max_file_instances', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_index_stat', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_memory_classes', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('performance_schema_max_metadata_locks', 'COMPILED', '', '-1', '104857600', NULL, NULL, NULL),
+('performance_schema_max_meter_classes', 'COMPILED', '', '0', '64', NULL, NULL, NULL),
+('performance_schema_max_metric_classes', 'COMPILED', '', '0', '11000', NULL, NULL, NULL),
+('performance_schema_max_mutex_classes', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('performance_schema_max_mutex_instances', 'COMPILED', '', '-1', '104857600', NULL, NULL, NULL),
+('performance_schema_max_prepared_statements_instances', 'COMPILED', '', '-1', '4194304', NULL, NULL, NULL),
+('performance_schema_max_program_instances', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_rwlock_classes', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('performance_schema_max_rwlock_instances', 'COMPILED', '', '-1', '104857600', NULL, NULL, NULL),
+('performance_schema_max_socket_classes', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('performance_schema_max_socket_instances', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_sql_text_length', 'COMPILED', '', '0', '1048576', NULL, NULL, NULL),
+('performance_schema_max_stage_classes', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('performance_schema_max_statement_classes', 'COMPILED', '', '0', '256', NULL, NULL, NULL),
+('performance_schema_max_statement_stack', 'COMPILED', '', '1', '256', NULL, NULL, NULL),
+('performance_schema_max_table_handles', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_table_instances', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_table_lock_stat', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_max_thread_classes', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('performance_schema_max_thread_instances', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_session_connect_attrs_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_setup_actors_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_setup_objects_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('performance_schema_show_processlist', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('performance_schema_users_size', 'COMPILED', '', '-1', '1048576', NULL, NULL, NULL),
+('persist_only_admin_x509_subject', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('persist_sensitive_variables_in_plaintext', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('persisted_globals_load', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('pid_file', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('plugin_dir', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('port', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '65535', NULL, NULL, NULL),
+('preload_buffer_size', 'COMPILED', '', '1024', '1073741824', NULL, NULL, NULL),
+('print_identified_with_as_hex', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('profiling', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('profiling_history_size', 'COMPILED', '', '0', '100', NULL, NULL, NULL),
+('protocol_compression_algorithms', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('protocol_version', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('proxy_user', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('pseudo_replica_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('pseudo_slave_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('pseudo_thread_id', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('query_alloc_block_size', 'COMPILED', '', '1024', '4294966272', NULL, NULL, NULL),
+('query_prealloc_size', 'COMPILED', '', '8192', '4294966272', NULL, NULL, NULL),
+('rand_seed1', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('rand_seed2', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('range_alloc_block_size', 'COMPILED', '', '4096', '4294966272', NULL, NULL, NULL),
+('range_optimizer_max_mem_size', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('rbr_exec_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('read_buffer_size', 'COMPILED', '', '8192', '2147479552', NULL, NULL, NULL),
+('read_only', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('read_rnd_buffer_size', 'COMPILED', '', '1', '2147483647', NULL, NULL, NULL),
+('regexp_stack_limit', 'COMPILED', '', '0', '2147483647', NULL, NULL, NULL),
+('regexp_time_limit', 'COMPILED', '', '0', '2147483647', NULL, NULL, NULL),
+('relay_log', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('relay_log_basename', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('relay_log_index', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('relay_log_purge', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('relay_log_recovery', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('relay_log_space_limit', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL),
+('replica_allow_batching', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replica_checkpoint_group', 'COMPILED', '', '32', '524280', NULL, NULL, NULL),
+('replica_checkpoint_period', 'COMPILED', '', '1', '4294967295', NULL, NULL, NULL),
+('replica_compressed_protocol', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replica_exec_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replica_load_tmpdir', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replica_max_allowed_packet', 'COMPILED', '', '1024', '1073741824', NULL, NULL, NULL),
+('replica_net_timeout', 'COMPILED', '', '1', '31536000', NULL, NULL, NULL),
+('replica_parallel_type', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replica_parallel_workers', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('replica_pending_jobs_size_max', 'COMPILED', '', '1024', '18446744073709550592', NULL, NULL, NULL),
+('replica_preserve_commit_order', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replica_skip_errors', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replica_sql_verify_checksum', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replica_transaction_retries', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('replica_type_conversions', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replication_optimize_for_static_plugin_config', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('replication_sender_observe_commit_only', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('report_host', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('report_password', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('report_port', 'COMPILED', '', '0', '65535', NULL, NULL, NULL),
+('report_user', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('require_row_format', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('require_secure_transport', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('restrict_fk_on_non_standard_key', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('resultset_metadata', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('rpl_read_size', 'COMPILED', '', '8192', '4294963200', NULL, NULL, NULL),
+('rpl_stop_replica_timeout', 'COMPILED', '', '2', '31536000', NULL, NULL, NULL),
+('rpl_stop_slave_timeout', 'COMPILED', '', '2', '31536000', NULL, NULL, NULL),
+('schema_definition_cache', 'COMPILED', '', '256', '524288', NULL, NULL, NULL),
+('secondary_engine_cost_threshold', 'COMPILED', '', '0', '9218868437227405311', NULL, NULL, NULL),
+('secure_file_priv', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('select_into_buffer_size', 'COMPILED', '', '8192', '2147479552', NULL, NULL, NULL),
+('select_into_disk_sync', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('select_into_disk_sync_delay', 'COMPILED', '', '0', '31536000', NULL, NULL, NULL),
+('server_id', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '4294967295', NULL, NULL, NULL),
+('server_id_bits', 'COMPILED', '', '0', '32', NULL, NULL, NULL),
+('server_uuid', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('session_track_gtids', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('session_track_schema', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('session_track_state_change', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('session_track_system_variables', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('session_track_transaction_info', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('set_operations_buffer_size', 'COMPILED', '', '16384', '18446744073709551488', NULL, NULL, NULL),
+('sha256_password_auto_generate_rsa_keys', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sha256_password_private_key_path', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sha256_password_proxy_users', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sha256_password_public_key_path', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('shared_memory', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('shared_memory_base_name', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('show_create_table_skip_secondary_engine', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('show_create_table_verbosity', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('show_gipk_in_create_table_and_information_schema', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('skip_external_locking', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('skip_name_resolve', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('skip_networking', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('skip_replica_start', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('skip_show_database', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('skip_slave_start', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_allow_batching', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_checkpoint_group', 'COMPILED', '', '32', '524280', NULL, NULL, NULL),
+('slave_checkpoint_period', 'COMPILED', '', '1', '4294967295', NULL, NULL, NULL),
+('slave_compressed_protocol', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_exec_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_load_tmpdir', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_max_allowed_packet', 'COMPILED', '', '1024', '1073741824', NULL, NULL, NULL),
+('slave_net_timeout', 'COMPILED', '', '1', '31536000', NULL, NULL, NULL),
+('slave_parallel_type', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_parallel_workers', 'COMPILED', '', '0', '1024', NULL, NULL, NULL),
+('slave_pending_jobs_size_max', 'COMPILED', '', '1024', '18446744073709550592', NULL, NULL, NULL),
+('slave_preserve_commit_order', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_skip_errors', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_sql_verify_checksum', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slave_transaction_retries', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('slave_type_conversions', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slow_launch_time', 'COMPILED', '', '0', '31536000', NULL, NULL, NULL),
+('slow_query_log', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('slow_query_log_file', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('socket', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('sort_buffer_size', 'COMPILED', '', '32768', '4294967295', NULL, NULL, NULL),
+('source_verify_checksum', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_auto_is_null', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_big_selects', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_buffer_result', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_generate_invisible_primary_key', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_log_bin', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_log_off', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_mode', 'DYNAMIC', '', '0', '0', '2025-12-09 12:41:44.207628', 'root', 'localhost'),
+('sql_notes', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_quote_show_create', 'DYNAMIC', '', '0', '0', '2025-12-09 12:41:47.249224', 'root', 'localhost'),
+('sql_replica_skip_counter', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('sql_require_primary_key', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_safe_updates', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sql_select_limit', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL),
+('sql_slave_skip_counter', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('sql_warnings', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('ssl_ca', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('ssl_capath', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('ssl_cert', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('ssl_cipher', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('ssl_crl', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('ssl_crlpath', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('ssl_fips_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('ssl_key', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('ssl_session_cache_mode', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('ssl_session_cache_timeout', 'COMPILED', '', '0', '84600', NULL, NULL, NULL),
+('statement_id', 'COMPILED', '', '0', '9223372036854775807', NULL, NULL, NULL),
+('stored_program_cache', 'COMPILED', '', '16', '524288', NULL, NULL, NULL),
+('stored_program_definition_cache', 'COMPILED', '', '256', '524288', NULL, NULL, NULL),
+('super_read_only', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('sync_binlog', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('sync_master_info', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('sync_relay_log', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('sync_relay_log_info', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('sync_source_info', 'COMPILED', '', '0', '4294967295', NULL, NULL, NULL),
+('system_time_zone', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('table_definition_cache', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '400', '524288', NULL, NULL, NULL),
+('table_encryption_privilege_check', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('table_open_cache', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '1', '524288', NULL, NULL, NULL),
+('table_open_cache_instances', 'COMPILED', '', '1', '64', NULL, NULL, NULL),
+('tablespace_definition_cache', 'COMPILED', '', '256', '524288', NULL, NULL, NULL),
+('temptable_max_mmap', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL),
+('temptable_max_ram', 'COMPILED', '', '2097152', '18446744073709551615', NULL, NULL, NULL),
+('temptable_use_mmap', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('terminology_use_previous', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('thread_cache_size', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '16384', NULL, NULL, NULL),
+('thread_handling', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('thread_stack', 'COMPILED', '', '131072', '4294966272', NULL, NULL, NULL),
+('time_zone', 'DYNAMIC', '', '0', '0', '2025-12-09 12:41:44.210578', 'root', 'localhost'),
+('timestamp', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('tls_certificates_enforced_validation', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('tls_ciphersuites', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('tls_version', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('tmp_table_size', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '1024', '18446744073709551615', NULL, NULL, NULL),
+('tmpdir', 'EXPLICIT', 'D:\\OSPanel\\modules\\MySQL-8.4\\my.ini', '0', '0', NULL, NULL, NULL),
+('transaction_alloc_block_size', 'COMPILED', '', '1024', '131072', NULL, NULL, NULL),
+('transaction_allow_batching', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('transaction_isolation', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('transaction_prealloc_size', 'COMPILED', '', '1024', '131072', NULL, NULL, NULL),
+('transaction_read_only', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('unique_checks', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('updatable_views_with_limit', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('use_secondary_engine', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('version', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('version_comment', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('version_compile_machine', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('version_compile_os', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('version_compile_zlib', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('wait_timeout', 'COMPILED', '', '1', '2147483', NULL, NULL, NULL),
+('warning_count', 'COMPILED', '', '0', '18446744073709551615', NULL, NULL, NULL);
+INSERT INTO `variables_info` (`VARIABLE_NAME`, `VARIABLE_SOURCE`, `VARIABLE_PATH`, `MIN_VALUE`, `MAX_VALUE`, `SET_TIME`, `SET_USER`, `SET_HOST`) VALUES
+('windowing_use_high_precision', 'COMPILED', '', '0', '0', NULL, NULL, NULL),
+('xa_detach_on_prepare', 'COMPILED', '', '0', '0', NULL, NULL, NULL);
+
+--
+-- Индексы сохранённых таблиц
+--
+
+--
+-- Индексы таблицы `accounts`
+--
+ALTER TABLE `accounts`
+  ADD UNIQUE KEY `ACCOUNT` (`USER`,`HOST`);
+
+--
+-- Индексы таблицы `cond_instances`
+--
+ALTER TABLE `cond_instances`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `NAME` (`NAME`);
+
+--
+-- Индексы таблицы `data_locks`
+--
+ALTER TABLE `data_locks`
+  ADD PRIMARY KEY (`ENGINE_LOCK_ID`,`ENGINE`),
+  ADD KEY `ENGINE_TRANSACTION_ID` (`ENGINE_TRANSACTION_ID`,`ENGINE`),
+  ADD KEY `THREAD_ID` (`THREAD_ID`,`EVENT_ID`),
+  ADD KEY `OBJECT_SCHEMA` (`OBJECT_SCHEMA`,`OBJECT_NAME`,`PARTITION_NAME`,`SUBPARTITION_NAME`);
+
+--
+-- Индексы таблицы `data_lock_waits`
+--
+ALTER TABLE `data_lock_waits`
+  ADD PRIMARY KEY (`REQUESTING_ENGINE_LOCK_ID`,`BLOCKING_ENGINE_LOCK_ID`,`ENGINE`),
+  ADD KEY `REQUESTING_ENGINE_LOCK_ID` (`REQUESTING_ENGINE_LOCK_ID`,`ENGINE`),
+  ADD KEY `BLOCKING_ENGINE_LOCK_ID` (`BLOCKING_ENGINE_LOCK_ID`,`ENGINE`),
+  ADD KEY `REQUESTING_ENGINE_TRANSACTION_ID` (`REQUESTING_ENGINE_TRANSACTION_ID`,`ENGINE`),
+  ADD KEY `BLOCKING_ENGINE_TRANSACTION_ID` (`BLOCKING_ENGINE_TRANSACTION_ID`,`ENGINE`),
+  ADD KEY `REQUESTING_THREAD_ID` (`REQUESTING_THREAD_ID`,`REQUESTING_EVENT_ID`),
+  ADD KEY `BLOCKING_THREAD_ID` (`BLOCKING_THREAD_ID`,`BLOCKING_EVENT_ID`);
+
+--
+-- Индексы таблицы `error_log`
+--
+ALTER TABLE `error_log`
+  ADD PRIMARY KEY (`LOGGED`),
+  ADD KEY `THREAD_ID` (`THREAD_ID`),
+  ADD KEY `PRIO` (`PRIO`),
+  ADD KEY `ERROR_CODE` (`ERROR_CODE`),
+  ADD KEY `SUBSYSTEM` (`SUBSYSTEM`);
+
+--
+-- Индексы таблицы `events_errors_summary_by_account_by_error`
+--
+ALTER TABLE `events_errors_summary_by_account_by_error`
+  ADD UNIQUE KEY `ACCOUNT` (`USER`,`HOST`,`ERROR_NUMBER`);
+
+--
+-- Индексы таблицы `events_errors_summary_by_host_by_error`
+--
+ALTER TABLE `events_errors_summary_by_host_by_error`
+  ADD UNIQUE KEY `HOST` (`HOST`,`ERROR_NUMBER`);
+
+--
+-- Индексы таблицы `events_errors_summary_by_thread_by_error`
+--
+ALTER TABLE `events_errors_summary_by_thread_by_error`
+  ADD UNIQUE KEY `THREAD_ID` (`THREAD_ID`,`ERROR_NUMBER`);
+
+--
+-- Индексы таблицы `events_errors_summary_by_user_by_error`
+--
+ALTER TABLE `events_errors_summary_by_user_by_error`
+  ADD UNIQUE KEY `USER` (`USER`,`ERROR_NUMBER`);
+
+--
+-- Индексы таблицы `events_errors_summary_global_by_error`
+--
+ALTER TABLE `events_errors_summary_global_by_error`
+  ADD UNIQUE KEY `ERROR_NUMBER` (`ERROR_NUMBER`);
+
+--
+-- Индексы таблицы `events_stages_current`
+--
+ALTER TABLE `events_stages_current`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_ID`);
+
+--
+-- Индексы таблицы `events_stages_history`
+--
+ALTER TABLE `events_stages_history`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_ID`);
+
+--
+-- Индексы таблицы `events_stages_summary_by_account_by_event_name`
+--
+ALTER TABLE `events_stages_summary_by_account_by_event_name`
+  ADD UNIQUE KEY `ACCOUNT` (`USER`,`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_stages_summary_by_host_by_event_name`
+--
+ALTER TABLE `events_stages_summary_by_host_by_event_name`
+  ADD UNIQUE KEY `HOST` (`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_stages_summary_by_thread_by_event_name`
+--
+ALTER TABLE `events_stages_summary_by_thread_by_event_name`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_stages_summary_by_user_by_event_name`
+--
+ALTER TABLE `events_stages_summary_by_user_by_event_name`
+  ADD UNIQUE KEY `USER` (`USER`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_stages_summary_global_by_event_name`
+--
+ALTER TABLE `events_stages_summary_global_by_event_name`
+  ADD PRIMARY KEY (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_statements_current`
+--
+ALTER TABLE `events_statements_current`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_ID`);
+
+--
+-- Индексы таблицы `events_statements_histogram_by_digest`
+--
+ALTER TABLE `events_statements_histogram_by_digest`
+  ADD UNIQUE KEY `SCHEMA_NAME` (`SCHEMA_NAME`,`DIGEST`,`BUCKET_NUMBER`);
+
+--
+-- Индексы таблицы `events_statements_histogram_global`
+--
+ALTER TABLE `events_statements_histogram_global`
+  ADD PRIMARY KEY (`BUCKET_NUMBER`);
+
+--
+-- Индексы таблицы `events_statements_history`
+--
+ALTER TABLE `events_statements_history`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_ID`);
+
+--
+-- Индексы таблицы `events_statements_summary_by_account_by_event_name`
+--
+ALTER TABLE `events_statements_summary_by_account_by_event_name`
+  ADD UNIQUE KEY `ACCOUNT` (`USER`,`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_statements_summary_by_digest`
+--
+ALTER TABLE `events_statements_summary_by_digest`
+  ADD UNIQUE KEY `SCHEMA_NAME` (`SCHEMA_NAME`,`DIGEST`);
+
+--
+-- Индексы таблицы `events_statements_summary_by_host_by_event_name`
+--
+ALTER TABLE `events_statements_summary_by_host_by_event_name`
+  ADD UNIQUE KEY `HOST` (`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_statements_summary_by_program`
+--
+ALTER TABLE `events_statements_summary_by_program`
+  ADD PRIMARY KEY (`OBJECT_TYPE`,`OBJECT_SCHEMA`,`OBJECT_NAME`);
+
+--
+-- Индексы таблицы `events_statements_summary_by_thread_by_event_name`
+--
+ALTER TABLE `events_statements_summary_by_thread_by_event_name`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_statements_summary_by_user_by_event_name`
+--
+ALTER TABLE `events_statements_summary_by_user_by_event_name`
+  ADD UNIQUE KEY `USER` (`USER`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_statements_summary_global_by_event_name`
+--
+ALTER TABLE `events_statements_summary_global_by_event_name`
+  ADD PRIMARY KEY (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_transactions_current`
+--
+ALTER TABLE `events_transactions_current`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_ID`);
+
+--
+-- Индексы таблицы `events_transactions_history`
+--
+ALTER TABLE `events_transactions_history`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_ID`);
+
+--
+-- Индексы таблицы `events_transactions_summary_by_account_by_event_name`
+--
+ALTER TABLE `events_transactions_summary_by_account_by_event_name`
+  ADD UNIQUE KEY `ACCOUNT` (`USER`,`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_transactions_summary_by_host_by_event_name`
+--
+ALTER TABLE `events_transactions_summary_by_host_by_event_name`
+  ADD UNIQUE KEY `HOST` (`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_transactions_summary_by_thread_by_event_name`
+--
+ALTER TABLE `events_transactions_summary_by_thread_by_event_name`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_transactions_summary_by_user_by_event_name`
+--
+ALTER TABLE `events_transactions_summary_by_user_by_event_name`
+  ADD UNIQUE KEY `USER` (`USER`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_transactions_summary_global_by_event_name`
+--
+ALTER TABLE `events_transactions_summary_global_by_event_name`
+  ADD PRIMARY KEY (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_waits_current`
+--
+ALTER TABLE `events_waits_current`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_ID`);
+
+--
+-- Индексы таблицы `events_waits_history`
+--
+ALTER TABLE `events_waits_history`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_ID`);
+
+--
+-- Индексы таблицы `events_waits_summary_by_account_by_event_name`
+--
+ALTER TABLE `events_waits_summary_by_account_by_event_name`
+  ADD UNIQUE KEY `ACCOUNT` (`USER`,`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_waits_summary_by_host_by_event_name`
+--
+ALTER TABLE `events_waits_summary_by_host_by_event_name`
+  ADD UNIQUE KEY `HOST` (`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_waits_summary_by_instance`
+--
+ALTER TABLE `events_waits_summary_by_instance`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `EVENT_NAME` (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_waits_summary_by_thread_by_event_name`
+--
+ALTER TABLE `events_waits_summary_by_thread_by_event_name`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_waits_summary_by_user_by_event_name`
+--
+ALTER TABLE `events_waits_summary_by_user_by_event_name`
+  ADD UNIQUE KEY `USER` (`USER`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `events_waits_summary_global_by_event_name`
+--
+ALTER TABLE `events_waits_summary_global_by_event_name`
+  ADD PRIMARY KEY (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `file_instances`
+--
+ALTER TABLE `file_instances`
+  ADD PRIMARY KEY (`FILE_NAME`),
+  ADD KEY `EVENT_NAME` (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `file_summary_by_event_name`
+--
+ALTER TABLE `file_summary_by_event_name`
+  ADD PRIMARY KEY (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `file_summary_by_instance`
+--
+ALTER TABLE `file_summary_by_instance`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `FILE_NAME` (`FILE_NAME`),
+  ADD KEY `EVENT_NAME` (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `global_status`
+--
+ALTER TABLE `global_status`
+  ADD PRIMARY KEY (`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `global_variables`
+--
+ALTER TABLE `global_variables`
+  ADD PRIMARY KEY (`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `hosts`
+--
+ALTER TABLE `hosts`
+  ADD UNIQUE KEY `HOST` (`HOST`);
+
+--
+-- Индексы таблицы `host_cache`
+--
+ALTER TABLE `host_cache`
+  ADD PRIMARY KEY (`IP`),
+  ADD KEY `HOST` (`HOST`);
+
+--
+-- Индексы таблицы `memory_summary_by_account_by_event_name`
+--
+ALTER TABLE `memory_summary_by_account_by_event_name`
+  ADD UNIQUE KEY `ACCOUNT` (`USER`,`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `memory_summary_by_host_by_event_name`
+--
+ALTER TABLE `memory_summary_by_host_by_event_name`
+  ADD UNIQUE KEY `HOST` (`HOST`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `memory_summary_by_thread_by_event_name`
+--
+ALTER TABLE `memory_summary_by_thread_by_event_name`
+  ADD PRIMARY KEY (`THREAD_ID`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `memory_summary_by_user_by_event_name`
+--
+ALTER TABLE `memory_summary_by_user_by_event_name`
+  ADD UNIQUE KEY `USER` (`USER`,`EVENT_NAME`);
+
+--
+-- Индексы таблицы `memory_summary_global_by_event_name`
+--
+ALTER TABLE `memory_summary_global_by_event_name`
+  ADD PRIMARY KEY (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `metadata_locks`
+--
+ALTER TABLE `metadata_locks`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `OBJECT_TYPE` (`OBJECT_TYPE`,`OBJECT_SCHEMA`,`OBJECT_NAME`,`COLUMN_NAME`),
+  ADD KEY `OWNER_THREAD_ID` (`OWNER_THREAD_ID`,`OWNER_EVENT_ID`);
+
+--
+-- Индексы таблицы `mutex_instances`
+--
+ALTER TABLE `mutex_instances`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `NAME` (`NAME`),
+  ADD KEY `LOCKED_BY_THREAD_ID` (`LOCKED_BY_THREAD_ID`);
+
+--
+-- Индексы таблицы `objects_summary_global_by_type`
+--
+ALTER TABLE `objects_summary_global_by_type`
+  ADD UNIQUE KEY `OBJECT` (`OBJECT_TYPE`,`OBJECT_SCHEMA`,`OBJECT_NAME`);
+
+--
+-- Индексы таблицы `persisted_variables`
+--
+ALTER TABLE `persisted_variables`
+  ADD PRIMARY KEY (`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `prepared_statements_instances`
+--
+ALTER TABLE `prepared_statements_instances`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD UNIQUE KEY `OWNER_THREAD_ID` (`OWNER_THREAD_ID`,`OWNER_EVENT_ID`),
+  ADD KEY `STATEMENT_ID` (`STATEMENT_ID`),
+  ADD KEY `STATEMENT_NAME` (`STATEMENT_NAME`),
+  ADD KEY `OWNER_OBJECT_TYPE` (`OWNER_OBJECT_TYPE`,`OWNER_OBJECT_SCHEMA`,`OWNER_OBJECT_NAME`);
+
+--
+-- Индексы таблицы `processlist`
+--
+ALTER TABLE `processlist`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Индексы таблицы `replication_applier_configuration`
+--
+ALTER TABLE `replication_applier_configuration`
+  ADD PRIMARY KEY (`CHANNEL_NAME`);
+
+--
+-- Индексы таблицы `replication_applier_status`
+--
+ALTER TABLE `replication_applier_status`
+  ADD PRIMARY KEY (`CHANNEL_NAME`);
+
+--
+-- Индексы таблицы `replication_applier_status_by_coordinator`
+--
+ALTER TABLE `replication_applier_status_by_coordinator`
+  ADD PRIMARY KEY (`CHANNEL_NAME`),
+  ADD KEY `THREAD_ID` (`THREAD_ID`);
+
+--
+-- Индексы таблицы `replication_applier_status_by_worker`
+--
+ALTER TABLE `replication_applier_status_by_worker`
+  ADD PRIMARY KEY (`CHANNEL_NAME`,`WORKER_ID`),
+  ADD KEY `THREAD_ID` (`THREAD_ID`);
+
+--
+-- Индексы таблицы `replication_connection_configuration`
+--
+ALTER TABLE `replication_connection_configuration`
+  ADD PRIMARY KEY (`CHANNEL_NAME`);
+
+--
+-- Индексы таблицы `replication_connection_status`
+--
+ALTER TABLE `replication_connection_status`
+  ADD PRIMARY KEY (`CHANNEL_NAME`),
+  ADD KEY `THREAD_ID` (`THREAD_ID`);
+
+--
+-- Индексы таблицы `rwlock_instances`
+--
+ALTER TABLE `rwlock_instances`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `NAME` (`NAME`),
+  ADD KEY `WRITE_LOCKED_BY_THREAD_ID` (`WRITE_LOCKED_BY_THREAD_ID`);
+
+--
+-- Индексы таблицы `session_account_connect_attrs`
+--
+ALTER TABLE `session_account_connect_attrs`
+  ADD PRIMARY KEY (`PROCESSLIST_ID`,`ATTR_NAME`);
+
+--
+-- Индексы таблицы `session_connect_attrs`
+--
+ALTER TABLE `session_connect_attrs`
+  ADD PRIMARY KEY (`PROCESSLIST_ID`,`ATTR_NAME`);
+
+--
+-- Индексы таблицы `session_status`
+--
+ALTER TABLE `session_status`
+  ADD PRIMARY KEY (`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `session_variables`
+--
+ALTER TABLE `session_variables`
+  ADD PRIMARY KEY (`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `setup_actors`
+--
+ALTER TABLE `setup_actors`
+  ADD PRIMARY KEY (`HOST`,`USER`,`ROLE`);
+
+--
+-- Индексы таблицы `setup_consumers`
+--
+ALTER TABLE `setup_consumers`
+  ADD PRIMARY KEY (`NAME`);
+
+--
+-- Индексы таблицы `setup_instruments`
+--
+ALTER TABLE `setup_instruments`
+  ADD PRIMARY KEY (`NAME`);
+
+--
+-- Индексы таблицы `setup_meters`
+--
+ALTER TABLE `setup_meters`
+  ADD PRIMARY KEY (`NAME`);
+
+--
+-- Индексы таблицы `setup_metrics`
+--
+ALTER TABLE `setup_metrics`
+  ADD PRIMARY KEY (`NAME`);
+
+--
+-- Индексы таблицы `setup_objects`
+--
+ALTER TABLE `setup_objects`
+  ADD UNIQUE KEY `OBJECT` (`OBJECT_TYPE`,`OBJECT_SCHEMA`,`OBJECT_NAME`);
+
+--
+-- Индексы таблицы `setup_threads`
+--
+ALTER TABLE `setup_threads`
+  ADD PRIMARY KEY (`NAME`);
+
+--
+-- Индексы таблицы `socket_instances`
+--
+ALTER TABLE `socket_instances`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `THREAD_ID` (`THREAD_ID`),
+  ADD KEY `SOCKET_ID` (`SOCKET_ID`),
+  ADD KEY `IP` (`IP`,`PORT`);
+
+--
+-- Индексы таблицы `socket_summary_by_event_name`
+--
+ALTER TABLE `socket_summary_by_event_name`
+  ADD PRIMARY KEY (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `socket_summary_by_instance`
+--
+ALTER TABLE `socket_summary_by_instance`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `EVENT_NAME` (`EVENT_NAME`);
+
+--
+-- Индексы таблицы `status_by_account`
+--
+ALTER TABLE `status_by_account`
+  ADD UNIQUE KEY `ACCOUNT` (`USER`,`HOST`,`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `status_by_host`
+--
+ALTER TABLE `status_by_host`
+  ADD UNIQUE KEY `HOST` (`HOST`,`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `status_by_thread`
+--
+ALTER TABLE `status_by_thread`
+  ADD PRIMARY KEY (`THREAD_ID`,`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `status_by_user`
+--
+ALTER TABLE `status_by_user`
+  ADD UNIQUE KEY `USER` (`USER`,`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `table_handles`
+--
+ALTER TABLE `table_handles`
+  ADD PRIMARY KEY (`OBJECT_INSTANCE_BEGIN`),
+  ADD KEY `OBJECT_TYPE` (`OBJECT_TYPE`,`OBJECT_SCHEMA`,`OBJECT_NAME`),
+  ADD KEY `OWNER_THREAD_ID` (`OWNER_THREAD_ID`,`OWNER_EVENT_ID`);
+
+--
+-- Индексы таблицы `table_io_waits_summary_by_index_usage`
+--
+ALTER TABLE `table_io_waits_summary_by_index_usage`
+  ADD UNIQUE KEY `OBJECT` (`OBJECT_TYPE`,`OBJECT_SCHEMA`,`OBJECT_NAME`,`INDEX_NAME`);
+
+--
+-- Индексы таблицы `table_io_waits_summary_by_table`
+--
+ALTER TABLE `table_io_waits_summary_by_table`
+  ADD UNIQUE KEY `OBJECT` (`OBJECT_TYPE`,`OBJECT_SCHEMA`,`OBJECT_NAME`);
+
+--
+-- Индексы таблицы `table_lock_waits_summary_by_table`
+--
+ALTER TABLE `table_lock_waits_summary_by_table`
+  ADD UNIQUE KEY `OBJECT` (`OBJECT_TYPE`,`OBJECT_SCHEMA`,`OBJECT_NAME`);
+
+--
+-- Индексы таблицы `threads`
+--
+ALTER TABLE `threads`
+  ADD PRIMARY KEY (`THREAD_ID`),
+  ADD KEY `PROCESSLIST_ID` (`PROCESSLIST_ID`),
+  ADD KEY `THREAD_OS_ID` (`THREAD_OS_ID`),
+  ADD KEY `NAME` (`NAME`),
+  ADD KEY `PROCESSLIST_ACCOUNT` (`PROCESSLIST_USER`,`PROCESSLIST_HOST`),
+  ADD KEY `PROCESSLIST_HOST` (`PROCESSLIST_HOST`),
+  ADD KEY `RESOURCE_GROUP` (`RESOURCE_GROUP`);
+
+--
+-- Индексы таблицы `users`
+--
+ALTER TABLE `users`
+  ADD UNIQUE KEY `USER` (`USER`);
+
+--
+-- Индексы таблицы `user_defined_functions`
+--
+ALTER TABLE `user_defined_functions`
+  ADD PRIMARY KEY (`UDF_NAME`);
+
+--
+-- Индексы таблицы `user_variables_by_thread`
+--
+ALTER TABLE `user_variables_by_thread`
+  ADD PRIMARY KEY (`THREAD_ID`,`VARIABLE_NAME`);
+
+--
+-- Индексы таблицы `variables_by_thread`
+--
+ALTER TABLE `variables_by_thread`
+  ADD PRIMARY KEY (`THREAD_ID`,`VARIABLE_NAME`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
